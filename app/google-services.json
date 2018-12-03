@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "331761313467",
+    "firebase_url": "https://mi-note-d6c52.firebaseio.com",
+    "project_id": "mi-note-d6c52",
+    "storage_bucket": "mi-note-d6c52.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:331761313467:android:93d0eaee6abb8f99",
+        "android_client_info": {
+          "package_name": "com.example.festus.mi_note"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "331761313467-2p0tmiqmuuhqev7loc4f5u8m6ss3osro.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.festus.mi_note",
+            "certificate_hash": "81667e10bf1d855d75058f55e4eadf03eabacfa9"
+          }
+        },
+        {
+          "client_id": "331761313467-nmih06asf27he4tedh5maltt59oncaf9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBxKoUoJdHdG_HthQB4aYoA1-kWOf-Ix4s"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "331761313467-nmih06asf27he4tedh5maltt59oncaf9.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
