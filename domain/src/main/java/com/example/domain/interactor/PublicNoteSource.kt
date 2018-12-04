@@ -38,7 +38,7 @@ class PublicNoteSource {
             Note("28/10/2018",
                 "When I understand that this glass is already broken, every moment with it becomes precious.",
                 0,
-                ColorType.BLUE,
+                "",
                 User(
                     "8675309",
                     "Ajahn Chah",
