@@ -35,7 +35,7 @@ internal val RoomNote.toNote: Note
         this.contents,
         this.upVotes,
         this.imageUrl,
-        User(this.creatorId)
+        User(this.creatorId,"","")
     )
 
 internal val Note.toFirebaseNote: FirebaseNote
@@ -54,7 +54,7 @@ internal val FirebaseNote.toNote: Note
         this.contents,
         this.upVotes,
         this.imageurl,
-        User(this.creator)
+        User(this.creator,"","")
     )
 
 
