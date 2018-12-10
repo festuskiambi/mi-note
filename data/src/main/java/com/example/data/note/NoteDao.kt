@@ -8,7 +8,7 @@ import com.example.data.entities.RoomNote
  */
 
 @Dao
-interface NoteDao{
+interface NoteDao {
 
     @Query("SELECT * FROM local_notes ORDER BY creation_date")
     fun getNotes(): List<RoomNote>
