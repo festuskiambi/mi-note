@@ -17,7 +17,7 @@ interface INoteDetailContract {
         fun getTime(): String
         fun startListFeature()
         fun restartFeature()
-        fun showMessage()
+        fun showMessage(message: String)
         fun showDeleteSnackbar()
     }
 

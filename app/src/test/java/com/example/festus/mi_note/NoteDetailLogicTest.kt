@@ -9,8 +9,16 @@ import com.example.domain.interactor.AuthSource
 import com.example.domain.interactor.PublicNoteSource
 import com.example.domain.interactor.RegisteredNoteSource
 import com.example.festus.mi_note.notedetail.INoteDetailContract
+import com.example.festus.mi_note.notedetail.NoteDetailEvent
 import com.example.festus.mi_note.notedetail.NoteDetailLogic
+import io.mockk.clearMocks
+import io.mockk.every
 import io.mockk.mockk
+import io.mockk.verify
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 
 /**
  * Created by Festus Kiambi on 12/11/18.
@@ -73,4 +81,30 @@ class NoteDetailLogicTest {
         id,
         isPrivate
     )
+
+    @BeforeEach
+    fun clear(){
+        clearMocks()
+
+        every {
+            dispatcher.provideUIContext()
+        }returns Dispatchers.Unconfined
+    }
+
+    @Test
+    fun `on start`() = runBlocking {
+        logic = getLogic()
+
+        every{
+            vModel.getNoteState()
+        }returns getNote()
+
+        logic.event(NoteDetailEvent.onStart)
+
+        verify { vModel.getNoteState() }
+        verify{ view.setBackgroundImage(getNote().imageUrl)}
+        verify{ view.setNoteBody(getNote().contents)}
+        verify { view.setDateLabel(getNote().creationDate) }
+
+    }
 }
