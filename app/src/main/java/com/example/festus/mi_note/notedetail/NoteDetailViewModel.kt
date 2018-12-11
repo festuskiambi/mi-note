@@ -14,7 +14,7 @@ class NoteDetailViewModel(
     private var id: MutableLiveData<String> = MutableLiveData(),
     private var isPrivateMode: MutableLiveData<Boolean> = MutableLiveData()
 
-) : INoteDetailContract.ViewModel, ViewModel() {
+) : ViewModel(), INoteDetailContract.ViewModel {
 
     override fun setIsPrivateMode(isPrivateMode: Boolean) {
         this.isPrivateMode.value!!

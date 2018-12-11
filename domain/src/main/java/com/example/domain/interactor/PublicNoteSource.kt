@@ -2,7 +2,6 @@ package com.example.domain.interactor
 
 import com.example.domain.DispatcherProvider
 import com.example.domain.ServiceLocator
-import com.example.domain.domainmodel.ColorType
 import com.example.domain.domainmodel.Note
 import com.example.domain.domainmodel.User
 import kotlinx.coroutines.channels.Channel
