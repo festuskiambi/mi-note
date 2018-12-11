@@ -22,7 +22,6 @@ interface INoteDetailContract {
     }
 
     interface ViewModel {
-
         fun setIsPrivateMode(isPrivateMode: Boolean)
         fun getIsPrivateMode(): Boolean
         fun setNoteState(note: Note)
@@ -39,7 +38,7 @@ interface INoteDetailContract {
 sealed class NoteDetailEvent {
     object onDoneClick : NoteDetailEvent()
     object onDeleteClick : NoteDetailEvent()
-    object onDeleteConfirmed : NoteDetailEvent ()
+    object onDeleteConfirmed : NoteDetailEvent()
     object onBackClick : NoteDetailEvent()
     object onStart : NoteDetailEvent()
     object onBind : NoteDetailEvent()
