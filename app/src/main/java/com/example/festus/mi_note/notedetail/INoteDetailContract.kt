@@ -36,11 +36,11 @@ interface INoteDetailContract {
 }
 
 sealed class NoteDetailEvent {
-    object onDoneClick : NoteDetailEvent()
-    object onDeleteClick : NoteDetailEvent()
-    object onDeleteConfirmed : NoteDetailEvent()
-    object onBackClick : NoteDetailEvent()
-    object onStart : NoteDetailEvent()
-    object onBind : NoteDetailEvent()
-    object onDestroy : NoteDetailEvent()
+    object OnDoneClick : NoteDetailEvent()
+    object OnDeleteClick : NoteDetailEvent()
+    object OnDeleteConfirmed : NoteDetailEvent()
+    object OnBackClick : NoteDetailEvent()
+    object OnStart : NoteDetailEvent()
+    object OnBind : NoteDetailEvent()
+    object OnDestroy : NoteDetailEvent()
 }

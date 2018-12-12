@@ -23,7 +23,7 @@ class RegisteredNoteSource {
             locator.remoteReg.getNotes()
         }
 
-        locator.cacheReg.getNotes()
+      //  locator.cacheReg.getNotes()
 
         localResult.await()
     }

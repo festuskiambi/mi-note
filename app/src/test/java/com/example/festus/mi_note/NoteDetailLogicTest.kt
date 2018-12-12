@@ -3,6 +3,7 @@ package com.example.festus.mi_note
 import com.example.domain.DispatcherProvider
 import com.example.domain.ServiceLocator
 import com.example.domain.domainmodel.Note
+import com.example.domain.domainmodel.Result
 import com.example.domain.domainmodel.User
 import com.example.domain.interactor.AnonymousNoteSource
 import com.example.domain.interactor.AuthSource
@@ -11,10 +12,7 @@ import com.example.domain.interactor.RegisteredNoteSource
 import com.example.festus.mi_note.notedetail.INoteDetailContract
 import com.example.festus.mi_note.notedetail.NoteDetailEvent
 import com.example.festus.mi_note.notedetail.NoteDetailLogic
-import io.mockk.clearMocks
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.verify
+import io.mockk.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.BeforeEach
@@ -29,7 +27,7 @@ class NoteDetailLogicTest {
     private val dispatcher: DispatcherProvider = mockk()
     private val locater: ServiceLocator = mockk()
     private val vModel: INoteDetailContract.ViewModel = mockk(relaxed = true)
-    private val view: INoteDetailContract.View = mockk()
+    private val view: INoteDetailContract.View = mockk(relaxed = true)
     private val anonymous: AnonymousNoteSource = mockk()
     private val registered: RegisteredNoteSource = mockk()
     private val public: PublicNoteSource = mockk()
@@ -91,20 +89,63 @@ class NoteDetailLogicTest {
         }returns Dispatchers.Unconfined
     }
 
-    @Test
-    fun `on start`() = runBlocking {
-        logic = getLogic()
+    /**
+     * When auth presses done, they are finished editing their note. They will be returned to a list
+     * view of all notes. Depending on if the note isPrivate, and whether or not the user is
+     * anonymous, will dictate where the note is written to.
+     *
+     * a. isPrivate: true, user: null
+     * b. isPrivate: false, user: not null
+     * c. isPrivate: true, user: not null
+     *
+     * 1. Check current user status: null (anonymous), isPrivate is beside the point if null user
+     * 2. Create a copy of the note in vM, with updated "content" value
+     * 3. exit to list activity upon completion
+     */
 
-        every{
+    @Test
+    fun`on done click private, not signed in`() = runBlocking {
+
+        val logic = getLogic()
+
+        every {
             vModel.getNoteState()
         }returns getNote()
 
-        logic.event(NoteDetailEvent.onStart)
+        every {
+            view.getNoteBody()
+        }returns getNote().contents
+
+        coEvery {
+            auth.getCurrentUser(locater)
+        }returns Result.build { null }
+
+        coEvery {
+            anonymous.updateNote(getNote(),locater,dispatcher)
+        }returns Result.build { true }
+
+        logic.event(NoteDetailEvent.OnDoneClick)
+
+        coVerify { auth.getCurrentUser(locater) }
+        coVerify { anonymous.updateNote(getNote(),locater,dispatcher) }
+        verify { view.getNoteBody() }
+        verify { vModel.getNoteState() }
+        verify { view.startListFeature() }
+    }
+
+    @Test
+    fun `On start`() = runBlocking {
+        logic = getLogic()
+
+        every {
+            vModel.getNoteState()
+        } returns getNote()
+
+        logic.event(NoteDetailEvent.OnStart)
 
         verify { vModel.getNoteState() }
-        verify{ view.setBackgroundImage(getNote().imageUrl)}
-        verify{ view.setNoteBody(getNote().contents)}
+        verify { view.setBackgroundImage(getNote().imageUrl) }
         verify { view.setDateLabel(getNote().creationDate) }
-
+        verify { view.setNoteBody(getNote().contents) }
     }
 }

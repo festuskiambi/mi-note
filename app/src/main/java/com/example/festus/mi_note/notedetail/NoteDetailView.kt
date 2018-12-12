@@ -5,7 +5,16 @@ import androidx.fragment.app.Fragment
 /**
  * Created by Festus Kiambi on 12/10/18.
  */
-class NoteDetailView(): Fragment(),INoteDetailContract.View{
+class NoteDetailView : Fragment(), INoteDetailContract.View {
+
+    lateinit var logic: INoteDetailContract.Logic
+
+    override fun onStart() {
+        super.onStart()
+        logic.event(NoteDetailEvent.OnStart)
+    }
+
+
     override fun setBackgroundImage(imageUrl: String) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }

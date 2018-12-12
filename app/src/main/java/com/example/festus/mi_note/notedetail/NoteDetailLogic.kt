@@ -41,8 +41,8 @@ class NoteDetailLogic(
 
     override fun event(event: NoteDetailEvent) {
         when(event){
-            is NoteDetailEvent.onBackClick -> onBackClick()
-            is NoteDetailEvent.onStart -> onStart()
+            is NoteDetailEvent.OnBackClick -> onBackClick()
+            is NoteDetailEvent.OnStart -> onStart()
         }
     }
 
