@@ -1,15 +1,20 @@
-package com.example.data.note
+package com.example.data.note.registered
 
 import com.example.domain.domainmodel.Note
+import com.example.domain.domainmodel.NoteTransaction
 import com.example.domain.domainmodel.Result
 import com.example.domain.repository.INoteRepository
+import com.example.domain.repository.IRemoteNoteRepository
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 
 /**
  * Created by Festus Kiambi on 12/4/18.
  */
-class FirebaseNoteRepositoryImpl : INoteRepository{
+class FirestoreRemoteNoteImpl : IRemoteNoteRepository{
+    override suspend fun synchronizeTransactions(transactions: List<NoteTransaction>): Result<Exception, Boolean> {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
 
     fun getTable(): DatabaseReference = FirebaseDatabase.getInstance().getReference("remote_notes")
 

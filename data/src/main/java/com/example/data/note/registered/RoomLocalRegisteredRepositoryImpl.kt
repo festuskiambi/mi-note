@@ -1,29 +1,21 @@
-package com.example.data.note
+package com.example.data.note.registered
 
+import com.example.data.note.RoomNoteDao
 import com.example.data.toNote
 import com.example.data.toNoteList
 import com.example.data.toRoomNote
 import com.example.domain.domainmodel.Note
 import com.example.domain.domainmodel.Result
 import com.example.domain.error.MiNoteError
-import com.example.domain.repository.ILocalNoteRepository
+import com.example.domain.repository.INoteRepository
 
 /**
  * Created by Festus Kiambi on 12/4/18.
  */
-
-class RoomLocalAnonymousRepositoryImpl(private val noteDao: RoomNoteDao): ILocalNoteRepository{
-
-    override suspend fun deleteAll(): Result<Exception, Boolean> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override suspend fun updateAll(list: List<Note>): Result<Exception, Boolean> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+class RoomLocalRegisteredRepositoryImpl(private val noteDao: RoomNoteDao): INoteRepository{
 
     override suspend fun getNotes(): Result<Exception, List<Note>> {
-      return  Result.build { noteDao.getNotes().toNoteList() }
+        return  Result.build { noteDao.getNotes().toNoteList() }
     }
 
     override suspend fun getNote(id: String): Result<Exception, Note?> {

@@ -3,11 +3,12 @@ package com.example.festus.mi_note.buildlogic
 import android.content.Context
 import androidx.lifecycle.ViewModelProviders
 import com.example.data.auth.FirebaseAuthRepositoryImpl
-import com.example.data.entities.RoomNote
-import com.example.data.note.AnonymousNoteDatabase
-import com.example.data.note.RoomLocalAnonymousRepositoryImpl
-import com.example.data.note.RoomLocalRegisteredRepositoryImpl
+import com.example.data.note.anonymous.AnonymousNoteDatabase
+import com.example.data.note.anonymous.RoomLocalAnonymousRepositoryImpl
 import com.example.data.note.RoomNoteDao
+import com.example.data.note.registered.FirestoreRemoteNoteImpl
+import com.example.data.note.registered.RoomLocalCacheImpl
+import com.example.data.note.transaction.RoomTransactionRepositoryImpl
 import com.example.domain.DispatcherProvider
 import com.example.domain.ServiceLocator
 import com.example.domain.interactor.AnonymousNoteSource
@@ -17,6 +18,7 @@ import com.example.domain.interactor.RegisteredNoteSource
 import com.example.domain.repository.IAuthRepository
 import com.example.domain.repository.ILocalNoteRepository
 import com.example.domain.repository.IRemoteNoteRepository
+import com.example.domain.repository.ITransactionRepository
 import com.example.festus.mi_note.login.ILoginContract
 import com.example.festus.mi_note.login.LoginActivity
 import com.example.festus.mi_note.login.LoginLogic
@@ -61,19 +63,19 @@ class Injector(private val activityContext: Context) {
     private val noteDao: RoomNoteDao by lazy {
         AnonymousNoteDatabase.getInstance(activityContext).roomNoteDao()
     }
-
-    fun provideNoteListLogic(view: NoteListView): INoteListContract.Logic {
-        return NoteListLogic(
-            DispatcherProvider,
-            ServiceLocator(localAnon, remoteReg, transactionReg, auth),
-            ViewModelProviders.of(activityContext as NoteListActivity).get(NoteListViewModel::class.java),
-            NoteListAdapter(),
-            view,
-            AnonymousNoteSource(),
-            RegisteredNoteSource(),                PublicNoteSource(),
-            AuthSource()
-        )
-    }
+//
+//    fun provideNoteListLogic(view: NoteListView): INoteListContract.Logic {
+//        return NoteListLogic(
+//            DispatcherProvider,
+//            ServiceLocator(localAnon, remoteReg, transactionReg, auth),
+//            ViewModelProviders.of(activityContext as NoteListActivity).get(NoteListViewModel::class.java),
+//            NoteListAdapter(),
+//            view,
+//            AnonymousNoteSource(),
+//            RegisteredNoteSource(),                PublicNoteSource(),
+//            AuthSource()
+//        )
+//    }
 
     fun provideLoginLogic(view: LoginActivity): ILoginContract.Logic {
         return LoginLogic(

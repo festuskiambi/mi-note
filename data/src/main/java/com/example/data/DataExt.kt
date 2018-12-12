@@ -2,7 +2,7 @@ package com.example.data
 
 import android.net.Uri
 import com.example.data.entities.RoomNote
-import com.example.data.note.FirebaseNote
+import com.example.data.note.registered.FirebaseNote
 import com.example.domain.domainmodel.Note
 import com.example.domain.domainmodel.User
 
