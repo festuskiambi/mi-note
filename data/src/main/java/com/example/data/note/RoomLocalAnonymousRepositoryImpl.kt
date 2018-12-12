@@ -6,13 +6,21 @@ import com.example.data.toRoomNote
 import com.example.domain.domainmodel.Note
 import com.example.domain.domainmodel.Result
 import com.example.domain.error.MiNoteError
-import com.example.domain.repository.INoteRepository
+import com.example.domain.repository.ILocalNoteRepository
 
 /**
  * Created by Festus Kiambi on 12/4/18.
  */
 
-class RoomLocalAnonymousRepositoryImpl(private val noteDao: NoteDao): INoteRepository{
+class RoomLocalAnonymousRepositoryImpl(private val noteDao: RoomNoteDao): ILocalNoteRepository{
+
+    override suspend fun deleteAll(): Result<Exception, Boolean> {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override suspend fun updateAll(list: List<Note>): Result<Exception, Boolean> {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
 
     override suspend fun getNotes(): Result<Exception, List<Note>> {
       return  Result.build { noteDao.getNotes().toNoteList() }

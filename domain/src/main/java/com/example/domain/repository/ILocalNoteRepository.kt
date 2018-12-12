@@ -9,6 +9,9 @@ import com.example.domain.domainmodel.Result
  */
 interface ILocalNoteRepository{
 
+    suspend fun getNotes(): Result<Exception,List<Note>>
+
+
     suspend fun getNote(id: String): Result<Exception,Note?>
 
     suspend fun deleteNote(note: Note): Result<Exception, Boolean>

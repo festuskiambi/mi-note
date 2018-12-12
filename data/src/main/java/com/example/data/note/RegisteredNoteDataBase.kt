@@ -20,7 +20,7 @@ const val DATABASE_REG = "registered"
 
 abstract class RegisteredNoteDataBase : RoomDatabase(){
 
-    abstract fun roomNoteDao(): NoteDao
+    abstract fun roomNoteDao(): RoomNoteDao
 
     companion object {
 

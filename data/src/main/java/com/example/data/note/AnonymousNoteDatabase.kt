@@ -19,7 +19,7 @@ const val DATABASE_ANON = "anonymous"
 )
 abstract class AnonymousNoteDatabase : RoomDatabase() {
 
-    abstract fun roomNoteDao(): NoteDao
+    abstract fun roomNoteDao(): RoomNoteDao
 
     //code below courtesy of https://github.com/googlesamples/android-sunflower; it is open
     //source just like this application.

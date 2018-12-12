@@ -11,7 +11,7 @@ import com.example.domain.repository.INoteRepository
 /**
  * Created by Festus Kiambi on 12/4/18.
  */
-class RoomLocalRegisteredRepositoryImpl(private val noteDao: NoteDao): INoteRepository{
+class RoomLocalRegisteredRepositoryImpl(private val noteDao: RoomNoteDao): INoteRepository{
 
     override suspend fun getNotes(): Result<Exception, List<Note>> {
         return  Result.build { noteDao.getNotes().toNoteList() }
