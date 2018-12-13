@@ -27,20 +27,16 @@ abstract class AnonymousNoteDatabase : RoomDatabase() {
     companion object {
 
         // For Singleton instantiation
-        @Volatile
-        private var instance: AnonymousNoteDatabase? = null
+        @Volatile private var instance: AnonymousNoteDatabase? = null
 
         fun getInstance(context: Context): AnonymousNoteDatabase {
             return instance ?: synchronized(this) {
-                instance
-                    ?: buildDatabase(context).also { instance = it }
+                instance ?: buildDatabase(context).also { instance = it }
             }
         }
 
         private fun buildDatabase(context: Context): AnonymousNoteDatabase {
-            return Room.databaseBuilder(context, AnonymousNoteDatabase::class.java,
-                DATABASE_ANON
-            )
+            return Room.databaseBuilder(context, AnonymousNoteDatabase::class.java, DATABASE_ANON)
                 .build()
         }
     }

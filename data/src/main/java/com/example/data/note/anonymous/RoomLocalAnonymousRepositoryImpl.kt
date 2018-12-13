@@ -15,11 +15,11 @@ import com.example.domain.repository.ILocalNoteRepository
 
 class RoomLocalAnonymousRepositoryImpl(private val noteDao: RoomNoteDao): ILocalNoteRepository{
 
-    override suspend fun deleteAll(): Result<Exception, Boolean> {
+    override suspend fun deleteAll(): Result<Exception, Unit> {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override suspend fun updateAll(list: List<Note>): Result<Exception, Boolean> {
+    override suspend fun updateAll(list: List<Note>): Result<Exception, Unit> {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
@@ -31,18 +31,18 @@ class RoomLocalAnonymousRepositoryImpl(private val noteDao: RoomNoteDao): ILocal
         return Result.build { noteDao.getNoteById(id).toNote }
     }
 
-    override suspend fun deleteNote(note: Note): Result<Exception, Boolean> {
+    override suspend fun deleteNote(note: Note): Result<Exception, Unit> {
         noteDao.deleteNote(note.toRoomNote)
 
-        return Result.build { true }
+        return Result.build { Unit}
     }
 
-    override suspend fun updateNote(note: Note): Result<Exception, Boolean> {
+    override suspend fun updateNote(note: Note): Result<Exception, Unit> {
         val updated = noteDao.insertOrUpdate(note.toRoomNote)
 
         return when{
             updated == 0L -> Result.build { throw MiNoteError.LocalIOException }
-            else -> Result.build { true }
+            else -> Result.build { Unit }
         }
     }
 

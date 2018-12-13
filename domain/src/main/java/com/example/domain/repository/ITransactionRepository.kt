@@ -12,7 +12,7 @@ interface ITransactionRepository {
 
     suspend fun getTransactions(): Result<Exception, List<NoteTransaction>>
 
-    suspend fun deleteTransactions(): Result<Exception, Boolean>
+    suspend fun deleteTransactions(): Result<Exception, Unit>
 
-    suspend fun updateTransactions(): Result<Exception, Boolean>
+    suspend fun updateTransactions(): Result<Exception, Unit>
 }

@@ -28,7 +28,6 @@ data class RoomNote(
     @ColumnInfo(name = "image_url")
     val imageUrl: String,
 
-    @ColumnInfo(name = "creator_id")
+    @ColumnInfo(name = "creatorId")
     val creatorId: String
-
 )

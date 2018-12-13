@@ -15,10 +15,7 @@ import com.example.domain.interactor.AnonymousNoteSource
 import com.example.domain.interactor.AuthSource
 import com.example.domain.interactor.PublicNoteSource
 import com.example.domain.interactor.RegisteredNoteSource
-import com.example.domain.repository.IAuthRepository
-import com.example.domain.repository.ILocalNoteRepository
-import com.example.domain.repository.IRemoteNoteRepository
-import com.example.domain.repository.ITransactionRepository
+import com.example.domain.repository.*
 import com.example.festus.mi_note.login.ILoginContract
 import com.example.festus.mi_note.login.LoginActivity
 import com.example.festus.mi_note.login.LoginLogic
@@ -46,9 +43,9 @@ class Injector(private val activityContext: Context) {
     }
 
     //For registered user local persistience (cache)
-    private val cacheReg: ILocalNoteRepository by lazy {
-        RoomLocalCacheImpl(noteDao)
-    }
+//    private val cacheReg: ILocalNoteRepository by lazy {
+//        RoomLocalCacheImpl(noteDao)
+//    }
 
     //For registered user local persistience (cache)
     private val transactionReg: ITransactionRepository by lazy {

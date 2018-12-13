@@ -3,6 +3,7 @@ package com.example.festus.mi_note.notedetail
 import com.example.domain.DispatcherProvider
 import com.example.domain.ServiceLocator
 import com.example.domain.domainmodel.Note
+import com.example.domain.domainmodel.Result
 import com.example.domain.interactor.AnonymousNoteSource
 import com.example.domain.interactor.AuthSource
 import com.example.domain.interactor.PublicNoteSource
@@ -11,6 +12,8 @@ import com.example.festus.mi_note.common.BaseLogic
 import com.example.festus.mi_note.common.MESSAGE_GENERIC_ERROR
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import kotlin.coroutines.CoroutineContext
 
 /**
@@ -27,7 +30,7 @@ class NoteDetailLogic(
     val authSource: AuthSource,
     id: String,
     isPrivate: Boolean
-): BaseLogic(dispatcher, locator), INoteDetailContract.Logic,CoroutineScope {
+) : BaseLogic(dispatcher, locator), INoteDetailContract.Logic, CoroutineScope {
 
     init {
         vModel.setId(id)
@@ -36,26 +39,63 @@ class NoteDetailLogic(
     }
 
     override val coroutineContext: CoroutineContext
-        get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
+        get() = dispatcher.provideUIContext() + jobTracker
 
 
     override fun event(event: NoteDetailEvent) {
-        when(event){
+        when (event) {
             is NoteDetailEvent.OnBackClick -> onBackClick()
             is NoteDetailEvent.OnStart -> onStart()
+            is NoteDetailEvent.OnDoneClick -> onDoneClick()
         }
     }
 
-    private fun onBackClick(){
-       view.startListFeature()
+    fun onDoneClick() = launch {
+
+        val userResult = authSource.getCurrentUser(locator)
+
+        when (userResult) {
+            is Result.Value -> prepareRegistereedRepoUpdate()
+            else -> prepareAnonymousRepoUpdate()
+        }
+
+
     }
 
-    private fun onStart(){
+    suspend fun prepareAnonymousRepoUpdate() {
+
+        val updateNote = vModel.getNoteState()!!.copy(contents = view.getNoteBody())
+
+        val updateResult = anonymous.updateNote(updateNote,locator,dispatcher)
+
+        when (updateResult) {
+            is Result.Value -> view.startListFeature()
+            is Result.Error -> view.showMessage(updateResult.error.toString())
+        }
+    }
+
+
+    private suspend fun prepareRegistereedRepoUpdate() {
+        val updatedNote = vModel.getNoteState()!!.copy(contents = view.getNoteBody())
+
+        val result = registered.updateNote(updatedNote, locator, dispatcher)
+
+        when (result) {
+            is Result.Value -> view.startListFeature()
+            is Result.Error -> view.showMessage(result.error.toString())
+        }
+    }
+
+    private fun onBackClick() {
+        view.startListFeature()
+    }
+
+    private fun onStart() {
         val state = vModel.getNoteState()
 
-        if (state !=null){
+        if (state != null) {
             renderView(state)
-        }else{
+        } else {
             view.showMessage(MESSAGE_GENERIC_ERROR)
             view.startListFeature()
         }

@@ -25,7 +25,7 @@ import org.junit.jupiter.api.Test
 class NoteDetailLogicTest {
 
     private val dispatcher: DispatcherProvider = mockk()
-    private val locater: ServiceLocator = mockk()
+    private val locator: ServiceLocator = mockk()
     private val vModel: INoteDetailContract.ViewModel = mockk(relaxed = true)
     private val view: INoteDetailContract.View = mockk(relaxed = true)
     private val anonymous: AnonymousNoteSource = mockk()
@@ -69,7 +69,7 @@ class NoteDetailLogicTest {
         isPrivate: Boolean = true
     ) = NoteDetailLogic(
         dispatcher,
-        locater,
+        locator,
         vModel,
         view,
         anonymous,
@@ -106,30 +106,62 @@ class NoteDetailLogicTest {
     @Test
     fun`on done click private, not signed in`() = runBlocking {
 
-        val logic = getLogic()
+        logic = getLogic()
 
+        every {
+            view.getNoteBody()
+        } returns getNote().contents
+
+        every {
+            vModel.getNoteState()
+        } returns getNote()
+
+        coEvery {
+            anonymous.updateNote(getNote(), locator, dispatcher)
+        } returns Result.build { true }
+
+        coEvery {
+            auth.getCurrentUser(locator)
+        } returns Result.build { null }
+
+        //call the unit to be tested
+        logic.event(NoteDetailEvent.OnDoneClick)
+
+        //verify interactions and state if necessary
+
+        verify { view.getNoteBody() }
+        verify { vModel.getNoteState() }
+        coVerify { auth.getCurrentUser(locator) }
+        coVerify { anonymous.updateNote(getNote(), locator, dispatcher) }
+        verify { view.startListFeature() }
+    }
+
+    @Test
+    fun `on update click, signed in`() = runBlocking {
+
+         logic = getLogic()
         every {
             vModel.getNoteState()
         }returns getNote()
 
-        every {
+        every{
             view.getNoteBody()
         }returns getNote().contents
 
         coEvery {
-            auth.getCurrentUser(locater)
-        }returns Result.build { null }
+            auth.getCurrentUser(locator)
+        }returns Result.build { getUser() }
 
         coEvery {
-            anonymous.updateNote(getNote(),locater,dispatcher)
+            registered.updateNote(getNote(),locator,dispatcher)
         }returns Result.build { true }
 
         logic.event(NoteDetailEvent.OnDoneClick)
 
-        coVerify { auth.getCurrentUser(locater) }
-        coVerify { anonymous.updateNote(getNote(),locater,dispatcher) }
         verify { view.getNoteBody() }
         verify { vModel.getNoteState() }
+        coVerify { auth.getCurrentUser(locator) }
+     //   coVerify { registered.updateNote(getNote(),locator,dispatcher) }
         verify { view.startListFeature() }
     }
 

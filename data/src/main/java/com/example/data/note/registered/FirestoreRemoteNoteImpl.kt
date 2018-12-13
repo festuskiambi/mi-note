@@ -3,7 +3,6 @@ package com.example.data.note.registered
 import com.example.domain.domainmodel.Note
 import com.example.domain.domainmodel.NoteTransaction
 import com.example.domain.domainmodel.Result
-import com.example.domain.repository.INoteRepository
 import com.example.domain.repository.IRemoteNoteRepository
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
