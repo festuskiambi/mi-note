@@ -3,6 +3,7 @@ package com.example.festus.mi_note.buildlogic
 import android.content.Context
 import androidx.lifecycle.ViewModelProviders
 import com.example.data.auth.FirebaseAuthRepositoryImpl
+import com.example.data.note.anonymous.AnonymousNoteDao
 import com.example.data.note.anonymous.AnonymousNoteDatabase
 import com.example.data.note.anonymous.RoomLocalAnonymousRepositoryImpl
 import com.example.data.note.registered.FirestoreRemoteNoteImpl
@@ -55,7 +56,7 @@ class Injector(private val activityContext: Context) {
         FirebaseAuthRepositoryImpl()
     }
 
-    private val noteDao: RoomNoteDao by lazy {
+    private val noteDao: AnonymousNoteDao by lazy {
         AnonymousNoteDatabase.getInstance(activityContext).roomNoteDao()
     }
 //
