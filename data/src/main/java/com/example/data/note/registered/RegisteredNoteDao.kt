@@ -1,6 +1,7 @@
-package com.example.data.note
+package com.example.data.note.registered
 
 import androidx.room.*
+import com.example.data.entities.RegisteredRoomNote
 import com.example.data.entities.RoomNote
 
 /**
@@ -8,10 +9,10 @@ import com.example.data.entities.RoomNote
  */
 
 @Dao
-interface RoomNoteDao {
+interface RegisteredNoteDao {
 
-    @Query("SELECT * FROM local_notes ORDER BY creation_date")
-    fun getNotes(): List<RoomNote>
+    @Query("SELECT * FROM registered_notes ORDER BY creation_date")
+    fun getNotes(): List<RegisteredRoomNote>
 
     @Query("SELECT * FROM local_notes WHERE creation_date = :creationDate ORDER BY creation_date")
     fun getNoteById(creationDate: String): RoomNote

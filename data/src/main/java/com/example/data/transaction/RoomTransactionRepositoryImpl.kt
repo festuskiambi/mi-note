@@ -1,4 +1,4 @@
-package com.example.data.note.transaction
+package com.example.data.transaction
 
 import com.example.domain.domainmodel.NoteTransaction
 import com.example.domain.domainmodel.Result
@@ -13,11 +13,11 @@ class RoomTransactionRepositoryImpl(): ITransactionRepository{
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override suspend fun deleteTransactions(): Result<Exception, Boolean> {
+    override suspend fun deleteTransactions(): Result<Exception, Unit> {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override suspend fun updateTransactions(): Result<Exception, Boolean> {
+    override suspend fun updateTransactions(): Result<Exception, Unit> {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 

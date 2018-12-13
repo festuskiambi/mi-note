@@ -118,7 +118,7 @@ class NoteDetailLogicTest {
 
         coEvery {
             anonymous.updateNote(getNote(), locator, dispatcher)
-        } returns Result.build { true }
+        } returns Result.build { Unit }
 
         coEvery {
             auth.getCurrentUser(locator)

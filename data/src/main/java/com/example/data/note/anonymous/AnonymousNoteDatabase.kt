@@ -5,7 +5,7 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.example.data.entities.RoomNote
-import com.example.data.note.RoomNoteDao
+import com.example.data.note.registered.RoomNoteDao
 
 /**
  * Created by Festus Kiambi on 12/4/18.

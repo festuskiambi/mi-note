@@ -10,10 +10,10 @@ import androidx.room.PrimaryKey
  */
 
 @Entity(
-    tableName = "local_notes",
+    tableName = "registered_notes",
     indices = [Index("creation_date")]
 )
-data class RoomNote(
+data class RegisteredRoomNote(
 
     @PrimaryKey
     @ColumnInfo(name = "creation_date")
@@ -25,9 +25,10 @@ data class RoomNote(
     @ColumnInfo(name = "up_votes")
     val upVotes: Int,
 
+
     @ColumnInfo(name = "image_url")
     val imageUrl: String,
 
-    @ColumnInfo(name = "creatorId")
+    @ColumnInfo(name = "creator_iId")
     val creatorId: String
 )

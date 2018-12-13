@@ -5,10 +5,9 @@ import androidx.lifecycle.ViewModelProviders
 import com.example.data.auth.FirebaseAuthRepositoryImpl
 import com.example.data.note.anonymous.AnonymousNoteDatabase
 import com.example.data.note.anonymous.RoomLocalAnonymousRepositoryImpl
-import com.example.data.note.RoomNoteDao
+import com.example.data.note.registered.RoomNoteDao
 import com.example.data.note.registered.FirestoreRemoteNoteImpl
-import com.example.data.note.registered.RoomLocalCacheImpl
-import com.example.data.note.transaction.RoomTransactionRepositoryImpl
+import com.example.data.transaction.RoomTransactionRepositoryImpl
 import com.example.domain.DispatcherProvider
 import com.example.domain.ServiceLocator
 import com.example.domain.interactor.AnonymousNoteSource

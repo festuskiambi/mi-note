@@ -1,6 +1,6 @@
 package com.example.data.note.anonymous
 
-import com.example.data.note.RoomNoteDao
+import com.example.data.note.registered.RoomNoteDao
 import com.example.data.toNote
 import com.example.data.toNoteList
 import com.example.data.toRoomNote
