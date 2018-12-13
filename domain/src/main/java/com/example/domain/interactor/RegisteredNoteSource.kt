@@ -23,7 +23,7 @@ class RegisteredNoteSource {
             locator.remoteReg.getNotes()
         }
 
-      //  locator.cacheReg.getNotes()
+        //  locator.cacheReg.getNotes()
 
         localResult.await()
     }
@@ -58,7 +58,7 @@ class RegisteredNoteSource {
         note: Note,
         locator: ServiceLocator,
         dispatcher: DispatcherProvider
-    ): Result<Exception, Boolean> = coroutineScope{
+    ): Result<Exception, Boolean> = coroutineScope {
 
         val localResult = async(dispatcher.provideIOContext()) {
             locator.remoteReg.deleteNote(note)
