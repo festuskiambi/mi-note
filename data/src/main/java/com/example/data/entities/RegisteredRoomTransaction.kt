@@ -33,5 +33,5 @@ data class RegisteredRoomTransaction(
     val creatorId: String,
 
     @ColumnInfo(name = "transaction_type")
-    val TransactionType: String
+    val transactionType: String
 )

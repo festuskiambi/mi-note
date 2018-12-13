@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.example.data.entities.RoomNote
+import com.example.data.entities.RegisteredRoomNote
 
 /**
  * Created by Festus Kiambi on 12/4/18.
@@ -13,14 +13,14 @@ import com.example.data.entities.RoomNote
 const val DATABASE_REG = "registered"
 
 @Database(
-    entities = [RoomNote::class],
+    entities = [RegisteredRoomNote::class],
     version = 1,
     exportSchema = false
 )
 
 abstract class RegisteredNoteDataBase : RoomDatabase(){
 
-    abstract fun roomNoteDao(): RoomNoteDao
+    abstract fun roomNoteDao(): RegisteredNoteDao
 
     companion object {
 

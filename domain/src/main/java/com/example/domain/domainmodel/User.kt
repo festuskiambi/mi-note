@@ -5,4 +5,8 @@ package com.example.domain.domainmodel
 
  */
 
-class User(val uid: String, val name: String, val profilePicUrl: String)
+class User(
+    val uid: String,
+    val name: String = "",
+    val profilePicUrl: String = "satellite_beam"
+)

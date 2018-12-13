@@ -1,8 +1,6 @@
 package com.example.data.note.anonymous
 
-import com.example.data.note.registered.RoomNoteDao
-import com.example.data.toNote
-import com.example.data.toNoteList
+import com.example.data.note.registered.RegisteredNoteDao
 import com.example.data.toRoomNote
 import com.example.domain.domainmodel.Note
 import com.example.domain.domainmodel.Result
@@ -13,7 +11,7 @@ import com.example.domain.repository.ILocalNoteRepository
  * Created by Festus Kiambi on 12/4/18.
  */
 
-class RoomLocalAnonymousRepositoryImpl(private val noteDao: RoomNoteDao): ILocalNoteRepository{
+class RoomLocalAnonymousRepositoryImpl(private val noteDao: RegisteredNoteDao): ILocalNoteRepository{
 
     override suspend fun deleteAll(): Result<Exception, Unit> {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.

@@ -1,7 +1,7 @@
 package com.example.data.note.anonymous
 
 import androidx.room.*
-import com.example.data.entities.RoomNote
+import com.example.data.entities.AnonymousRoomNote
 
 /**
  * Created by Festus Kiambi on 12/4/18.
@@ -9,16 +9,15 @@ import com.example.data.entities.RoomNote
 
 @Dao
 interface AnonymousNoteDao {
+    @Query("SELECT * FROM anonymous_notes ORDER BY creation_date")
+    fun getNotes(): List<AnonymousRoomNote>
 
-    @Query("SELECT * FROM local_notes ORDER BY creation_date")
-    fun getNotes(): List<RoomNote>
-
-    @Query("SELECT * FROM local_notes WHERE creation_date = :creationDate ORDER BY creation_date")
-    fun getNoteById(creationDate: String): RoomNote
+    @Query("SELECT * FROM anonymous_notes WHERE creation_date = :creationDate ORDER BY creation_date")
+    fun getNoteById(creationDate: String): AnonymousRoomNote
 
     @Delete
-    fun deleteNote(note: RoomNote)
+    fun deleteNote(note: AnonymousRoomNote)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertOrUpdate(note: RoomNote): Long
+    fun insertOrUpdate(note: AnonymousRoomNote): Long
 }

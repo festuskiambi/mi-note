@@ -4,7 +4,6 @@ package com.example.domain.domainmodel
  * Created by Festus Kiambi on 12/11/18.
  */
 data class NoteTransaction(
-
     val creationDate: String,
     val contents: String,
     val upVotes: Int,
