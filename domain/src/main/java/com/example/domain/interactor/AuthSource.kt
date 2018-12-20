@@ -1,6 +1,6 @@
 package com.example.domain.interactor
 
-import com.example.domain.ServiceLocator
+import com.example.domain.NoteServiceLocator
 import com.example.domain.domainmodel.Result
 import com.example.domain.domainmodel.User
 import kotlinx.coroutines.Dispatchers
@@ -13,11 +13,11 @@ import kotlinx.coroutines.runBlocking
 
 class AuthSource {
 
-    suspend fun getCurrentUser(locator: ServiceLocator): Result<Exception, User?> {
+    suspend fun getCurrentUser(locator: NoteServiceLocator): Result<Exception, User?> {
         return locator.authRepository.getCurrentUser()
     }
 
-    suspend fun deleteCurrentUser(locator: ServiceLocator): Result<Exception, Boolean> = runBlocking {
+    suspend fun deleteCurrentUser(locator: NoteServiceLocator): Result<Exception, Boolean> = runBlocking {
 
         val result = async(Dispatchers.IO) {
             locator.authRepository.deleteCurrentUser()
@@ -26,11 +26,11 @@ class AuthSource {
         result.await()
     }
 
-    suspend fun signOutCurrentUser(locator: ServiceLocator): Result<Exception, Unit> {
+    suspend fun signOutCurrentUser(locator: NoteServiceLocator): Result<Exception, Unit> {
         return locator.authRepository.signOutCurrentUser()
     }
 
-    suspend fun createGoogleUser(idToken: String, locator: ServiceLocator): Result<Exception, Boolean> {
+    suspend fun createGoogleUser(idToken: String, locator: NoteServiceLocator): Result<Exception, Boolean> {
         return locator.authRepository.createGoogleUser(idToken)
     }
 

@@ -9,7 +9,7 @@ import com.example.data.note.anonymous.RoomLocalAnonymousRepositoryImpl
 import com.example.data.note.registered.FirestoreRemoteNoteImpl
 import com.example.data.transaction.RoomTransactionRepositoryImpl
 import com.example.domain.DispatcherProvider
-import com.example.domain.ServiceLocator
+import com.example.domain.NoteServiceLocator
 import com.example.domain.interactor.AnonymousNoteSource
 import com.example.domain.interactor.AuthSource
 import com.example.domain.interactor.PublicNoteSource
@@ -63,7 +63,7 @@ class Injector(private val activityContext: Context) {
 //    fun provideNoteListLogic(view: NoteListView): INoteListContract.Logic {
 //        return NoteListLogic(
 //            DispatcherProvider,
-//            ServiceLocator(localAnon, remoteReg, transactionReg, auth),
+//            NoteServiceLocator(localAnon, remoteReg, transactionReg, auth),
 //            ViewModelProviders.of(activityContext as NoteListActivity).get(NoteListViewModel::class.java),
 //            NoteListAdapter(),
 //            view,
@@ -76,7 +76,7 @@ class Injector(private val activityContext: Context) {
     fun provideLoginLogic(view: LoginActivity): ILoginContract.Logic {
         return LoginLogic(
             DispatcherProvider,
-            ServiceLocator(localAnon, remoteReg, transactionReg, auth),
+            NoteServiceLocator(localAnon, remoteReg, transactionReg, auth),
             view,
             AuthSource()
         )
@@ -85,7 +85,7 @@ class Injector(private val activityContext: Context) {
     fun provideNoteDetailLogic(view: NoteDetailView, id: String, isPrivate:Boolean): INoteDetailContract.Logic {
         return NoteDetailLogic(
             DispatcherProvider,
-            ServiceLocator(localAnon, remoteReg, transactionReg, auth),
+            NoteServiceLocator(localAnon, remoteReg, transactionReg, auth),
             ViewModelProviders.of(activityContext as NoteDetailActivity)
                 .get(NoteDetailViewModel::class.java),
             view,

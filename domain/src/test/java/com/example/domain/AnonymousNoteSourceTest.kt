@@ -21,7 +21,7 @@ class AnonymousNoteSourceTest {
 
     val anonymousNoteSource = AnonymousNoteSource()
 
-    val locator: ServiceLocator = mockk()
+    val locatorNote: NoteServiceLocator = mockk()
 
     val dispatcher: DispatcherProvider = mockk()
 
@@ -58,14 +58,14 @@ class AnonymousNoteSourceTest {
     fun ` on get notes successful`() = runBlocking {
         val testList = listOf(getNote(), getNote(), getNote())
 
-        every { locator.localAnon } returns noteRepo
+        every { locatorNote.localAnon } returns noteRepo
 
         coEvery { noteRepo.getNotes() } returns Result.build { testList }
 
-        val reusult: Result<Exception, List<Note>> = anonymousNoteSource.getNotes(locator, dispatcher)
+        val reusult: Result<Exception, List<Note>> = anonymousNoteSource.getNotes(locatorNote, dispatcher)
 
         verify { dispatcher.provideIOContext() }
-        verify { locator.localAnon }
+        verify { locatorNote.localAnon }
         coVerify { noteRepo.getNotes() }
 
 
@@ -76,14 +76,14 @@ class AnonymousNoteSourceTest {
     @Test
     fun `on get notes Error`() = runBlocking {
 
-        every { locator.localAnon } returns noteRepo
+        every { locatorNote.localAnon } returns noteRepo
 
         coEvery { noteRepo.getNotes() } returns Result.build { throw MiNoteError.LocalIOException }
 
-        val result: Result<Exception, List<Note>> = anonymousNoteSource.getNotes(locator, dispatcher)
+        val result: Result<Exception, List<Note>> = anonymousNoteSource.getNotes(locatorNote, dispatcher)
 
         verify { dispatcher.provideIOContext() }
-        verify { locator.localAnon }
+        verify { locatorNote.localAnon }
         coVerify { noteRepo.getNotes() }
 
         assert(result is Result.Error)
@@ -94,14 +94,14 @@ class AnonymousNoteSourceTest {
 
         val testNote = getNote()
 
-        every { locator.localAnon } returns noteRepo
+        every { locatorNote.localAnon } returns noteRepo
         coEvery { noteRepo.getNote(testNote.creationDate) } returns Result.build { testNote }
 
         val result: Result<Exception, Note?> =
-            anonymousNoteSource.getNoteById(testNote.creationDate, locator, dispatcher)
+            anonymousNoteSource.getNoteById(testNote.creationDate, locatorNote, dispatcher)
 
         verify { dispatcher.provideIOContext() }
-        verify { locator.localAnon }
+        verify { locatorNote.localAnon }
         coVerify { noteRepo.getNote(testNote.creationDate) }
 
         if (result is Result.Value) assertEquals(result.value, testNote)
@@ -111,10 +111,10 @@ class AnonymousNoteSourceTest {
     @Test
     fun `on get note error`() = runBlocking {
         val testId = getNote().creationDate
-        every { locator.localAnon } returns noteRepo
+        every { locatorNote.localAnon } returns noteRepo
         coEvery { (noteRepo.getNote(testId)) } returns Result.build { throw MiNoteError.LocalIOException }
 
-        val result: Result<Exception, Note?> = anonymousNoteSource.getNoteById(testId, locator, dispatcher)
+        val result: Result<Exception, Note?> = anonymousNoteSource.getNoteById(testId, locatorNote, dispatcher)
 
         assert(result is Result.Error)
     }
@@ -122,13 +122,13 @@ class AnonymousNoteSourceTest {
     @Test
     fun `on update note successful`() = runBlocking {
         val testNote = getNote()
-        every { locator.localAnon } returns noteRepo
+        every { locatorNote.localAnon } returns noteRepo
         coEvery { noteRepo.updateNote(testNote) } returns Result.build { Unit }
 
-        val result: Result<Exception, Unit> = anonymousNoteSource.updateNote(testNote, locator, dispatcher)
+        val result: Result<Exception, Unit> = anonymousNoteSource.updateNote(testNote, locatorNote, dispatcher)
 
         verify { dispatcher.provideIOContext() }
-        verify { locator.localAnon }
+        verify { locatorNote.localAnon }
         coVerify { noteRepo.updateNote(testNote) }
 
         if (result is Result.Value) assertTrue { true }
@@ -140,10 +140,10 @@ class AnonymousNoteSourceTest {
 
         val testNote = getNote()
 
-        every { locator.localAnon } returns noteRepo
+        every { locatorNote.localAnon } returns noteRepo
         coEvery { noteRepo.updateNote(testNote) } returns Result.build { throw MiNoteError.LocalIOException }
 
-        val result: Result<Exception, Unit> = anonymousNoteSource.updateNote(testNote, locator, dispatcher)
+        val result: Result<Exception, Unit> = anonymousNoteSource.updateNote(testNote, locatorNote, dispatcher)
 
         assert(result is Result.Error)
 
@@ -154,13 +154,13 @@ class AnonymousNoteSourceTest {
 
         val testNote = getNote()
 
-        every { locator.localAnon } returns noteRepo
+        every { locatorNote.localAnon } returns noteRepo
         coEvery { noteRepo.deleteNote(testNote) } returns Result.build { Unit }
 
-        val result: Result<Exception, Unit> = anonymousNoteSource.deleteNote(testNote, locator, dispatcher)
+        val result: Result<Exception, Unit> = anonymousNoteSource.deleteNote(testNote, locatorNote, dispatcher)
 
         verify { dispatcher.provideIOContext() }
-        verify { locator.localAnon }
+        verify { locatorNote.localAnon }
         coVerify { noteRepo.deleteNote(testNote) }
 
         if (result is Result.Value) assertTrue(true)
@@ -172,10 +172,10 @@ class AnonymousNoteSourceTest {
 
         val testNote = getNote()
 
-        every { locator.localAnon } returns noteRepo
+        every { locatorNote.localAnon } returns noteRepo
         coEvery { noteRepo.deleteNote(testNote) } returns Result.build { throw MiNoteError.LocalIOException }
 
-        val result: Result<Exception, Unit> = anonymousNoteSource.deleteNote(testNote, locator, dispatcher)
+        val result: Result<Exception, Unit> = anonymousNoteSource.deleteNote(testNote, locatorNote, dispatcher)
 
         assert(result is Result.Error)
     }

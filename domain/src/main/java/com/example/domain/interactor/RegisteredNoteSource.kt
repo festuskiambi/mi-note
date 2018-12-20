@@ -1,12 +1,11 @@
 package com.example.domain.interactor
 
 import com.example.domain.DispatcherProvider
-import com.example.domain.ServiceLocator
+import com.example.domain.NoteServiceLocator
 import com.example.domain.domainmodel.Note
 import com.example.domain.domainmodel.Result
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.runBlocking
 
 
 /**
@@ -15,9 +14,13 @@ import kotlinx.coroutines.runBlocking
 class RegisteredNoteSource {
 
     suspend fun getNotes(
-        locator: ServiceLocator,
+        locator: NoteServiceLocator,
         dispatcher: DispatcherProvider
-    ): Result<Exception, List<Note>> = runBlocking {
+    ): Result<Exception, List<Note>> {
+
+        val transactionResult = locator.transactionReg.getTransactions()
+
+        when (transactionResult)
 
         val localResult = async(dispatcher.provideIOContext()) {
             locator.remoteReg.getNotes()
@@ -30,7 +33,7 @@ class RegisteredNoteSource {
 
     suspend fun getNoteById(
         id: String,
-        locator: ServiceLocator,
+        locator: NoteServiceLocator,
         dispatcher: DispatcherProvider
     ): Result<Exception, Note?> = coroutineScope {
 
@@ -43,7 +46,7 @@ class RegisteredNoteSource {
 
     suspend fun updateNote(
         note: Note,
-        locator: ServiceLocator,
+        locator: NoteServiceLocator,
         dispatcher: DispatcherProvider
     ): Result<Exception, Boolean> = coroutineScope {
 
@@ -56,7 +59,7 @@ class RegisteredNoteSource {
 
     suspend fun deleteNote(
         note: Note,
-        locator: ServiceLocator,
+        locator: NoteServiceLocator,
         dispatcher: DispatcherProvider
     ): Result<Exception, Boolean> = coroutineScope {
 

@@ -1,7 +1,7 @@
 package com.example.festus.mi_note.notedetail
 
 import com.example.domain.DispatcherProvider
-import com.example.domain.ServiceLocator
+import com.example.domain.NoteServiceLocator
 import com.example.domain.domainmodel.Note
 import com.example.domain.domainmodel.Result
 import com.example.domain.interactor.AnonymousNoteSource
@@ -13,7 +13,6 @@ import com.example.festus.mi_note.common.MESSAGE_GENERIC_ERROR
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import kotlin.coroutines.CoroutineContext
 
 /**
@@ -21,7 +20,7 @@ import kotlin.coroutines.CoroutineContext
  */
 class NoteDetailLogic(
     dispatcher: DispatcherProvider,
-    locator: ServiceLocator,
+    locator: NoteServiceLocator,
     val vModel: INoteDetailContract.ViewModel,
     val view: INoteDetailContract.View,
     val anonymous: AnonymousNoteSource,

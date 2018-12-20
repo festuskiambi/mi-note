@@ -1,8 +1,7 @@
 package com.example.festus.mi_note
 
-import android.os.Build
 import com.example.domain.DispatcherProvider
-import com.example.domain.ServiceLocator
+import com.example.domain.NoteServiceLocator
 import com.example.domain.domainmodel.Result
 import com.example.domain.domainmodel.User
 import com.example.domain.error.MiNoteError
@@ -26,7 +25,7 @@ class LoginLogicTest {
 
     private val dispatcher: DispatcherProvider = mockk()
 
-    private val locator: ServiceLocator = mockk()
+    private val locator: NoteServiceLocator = mockk()
 
     private val view: ILoginContract.View = mockk(relaxed = true)
 

@@ -1,7 +1,7 @@
 package com.example.domain.interactor
 
 import com.example.domain.DispatcherProvider
-import com.example.domain.ServiceLocator
+import com.example.domain.NoteServiceLocator
 import com.example.domain.domainmodel.Note
 import com.example.domain.domainmodel.User
 import kotlinx.coroutines.channels.Channel
@@ -13,7 +13,7 @@ import com.example.domain.domainmodel.Result
  */
 
 class PublicNoteSource {
-    suspend fun getNotes(locator: ServiceLocator,
+    suspend fun getNotes(locator: NoteServiceLocator,
                          dispatcher: DispatcherProvider): Result<Exception, List<Note>> {
         val listener = Channel<Result<Exception, List<Note>>>()
 
@@ -29,7 +29,7 @@ class PublicNoteSource {
     }
 
     suspend fun getNoteById(id: String,
-                            locator: ServiceLocator,
+                            locator: NoteServiceLocator,
                             dispatcher: DispatcherProvider): Result<Exception, Note> {
 
 
@@ -48,7 +48,7 @@ class PublicNoteSource {
     }
 
     suspend fun updateNote(note: Note,
-                           locator: ServiceLocator,
+                           locator: NoteServiceLocator,
                            dispatcher: DispatcherProvider): Result<Exception, Boolean> {
         val listener = Channel<Result<Exception, Boolean>>()
 
@@ -64,7 +64,7 @@ class PublicNoteSource {
     }
 
     suspend fun deleteNote(id: String,
-                           locator: ServiceLocator,
+                           locator: NoteServiceLocator,
                            dispatcher: DispatcherProvider
     ): Result<Exception, Boolean> {
         val listener = Channel<Result<Exception, Boolean>>()

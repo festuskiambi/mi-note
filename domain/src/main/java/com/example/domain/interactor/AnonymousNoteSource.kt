@@ -1,7 +1,7 @@
 package com.example.domain.interactor
 
 import com.example.domain.DispatcherProvider
-import com.example.domain.ServiceLocator
+import com.example.domain.NoteServiceLocator
 import com.example.domain.domainmodel.Note
 import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
@@ -13,7 +13,7 @@ import com.example.domain.domainmodel.Result
  */
 
 class AnonymousNoteSource {
-    suspend fun getNotes(locator: ServiceLocator, dispatcher: DispatcherProvider):
+    suspend fun getNotes(locator: NoteServiceLocator, dispatcher: DispatcherProvider):
             Result<Exception, List<Note>> = runBlocking {
 
                 val localResult = async(dispatcher.provideIOContext()) {
@@ -24,7 +24,7 @@ class AnonymousNoteSource {
 
     }
 
-    suspend fun getNoteById(id: String, locator: ServiceLocator, dispatcher: DispatcherProvider):
+    suspend fun getNoteById(id: String, locator: NoteServiceLocator, dispatcher: DispatcherProvider):
             Result<Exception, Note?> = runBlocking {
 
         val localResult = async(dispatcher.provideIOContext()) {
@@ -34,7 +34,7 @@ class AnonymousNoteSource {
         localResult.await()
     }
 
-    suspend fun updateNote(note: Note, locator: ServiceLocator, dispatcher: DispatcherProvider):
+    suspend fun updateNote(note: Note, locator: NoteServiceLocator, dispatcher: DispatcherProvider):
             Result<Exception, Unit> = runBlocking(block = {
         val localResult = async(dispatcher.provideIOContext()) {
             locator.localAnon.updateNote(note)
@@ -43,7 +43,7 @@ class AnonymousNoteSource {
         localResult.await()
     })
 
-    suspend fun deleteNote(note: Note, locator: ServiceLocator, dispatcher: DispatcherProvider):
+    suspend fun deleteNote(note: Note, locator: NoteServiceLocator, dispatcher: DispatcherProvider):
             Result<Exception, Unit> = runBlocking {
                 val localResult = async(dispatcher.provideIOContext()) {
             locator.localAnon.deleteNote(note)

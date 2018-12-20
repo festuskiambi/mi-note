@@ -1,7 +1,7 @@
 package com.example.festus.mi_note
 
 import com.example.domain.DispatcherProvider
-import com.example.domain.ServiceLocator
+import com.example.domain.NoteServiceLocator
 import com.example.domain.domainmodel.Note
 import com.example.domain.domainmodel.Result
 import com.example.domain.domainmodel.User
@@ -25,7 +25,7 @@ import org.junit.jupiter.api.Test
 class NoteDetailLogicTest {
 
     private val dispatcher: DispatcherProvider = mockk()
-    private val locator: ServiceLocator = mockk()
+    private val locatorNote: NoteServiceLocator = mockk()
     private val vModel: INoteDetailContract.ViewModel = mockk(relaxed = true)
     private val view: INoteDetailContract.View = mockk(relaxed = true)
     private val anonymous: AnonymousNoteSource = mockk()
@@ -69,7 +69,7 @@ class NoteDetailLogicTest {
         isPrivate: Boolean = true
     ) = NoteDetailLogic(
         dispatcher,
-        locator,
+        locatorNote,
         vModel,
         view,
         anonymous,
@@ -117,11 +117,11 @@ class NoteDetailLogicTest {
         } returns getNote()
 
         coEvery {
-            anonymous.updateNote(getNote(), locator, dispatcher)
+            anonymous.updateNote(getNote(), locatorNote, dispatcher)
         } returns Result.build { Unit }
 
         coEvery {
-            auth.getCurrentUser(locator)
+            auth.getCurrentUser(locatorNote)
         } returns Result.build { null }
 
         //call the unit to be tested
@@ -131,8 +131,8 @@ class NoteDetailLogicTest {
 
         verify { view.getNoteBody() }
         verify { vModel.getNoteState() }
-        coVerify { auth.getCurrentUser(locator) }
-        coVerify { anonymous.updateNote(getNote(), locator, dispatcher) }
+        coVerify { auth.getCurrentUser(locatorNote) }
+        coVerify { anonymous.updateNote(getNote(), locatorNote, dispatcher) }
         verify { view.startListFeature() }
     }
 
@@ -149,19 +149,19 @@ class NoteDetailLogicTest {
         }returns getNote().contents
 
         coEvery {
-            auth.getCurrentUser(locator)
+            auth.getCurrentUser(locatorNote)
         }returns Result.build { getUser() }
 
         coEvery {
-            registered.updateNote(getNote(),locator,dispatcher)
+            registered.updateNote(getNote(),locatorNote,dispatcher)
         }returns Result.build { true }
 
         logic.event(NoteDetailEvent.OnDoneClick)
 
         verify { view.getNoteBody() }
         verify { vModel.getNoteState() }
-        coVerify { auth.getCurrentUser(locator) }
-     //   coVerify { registered.updateNote(getNote(),locator,dispatcher) }
+        coVerify { auth.getCurrentUser(locatorNote) }
+     //   coVerify { registered.updateNote(getNote(),locatorNote,dispatcher) }
         verify { view.startListFeature() }
     }
 
