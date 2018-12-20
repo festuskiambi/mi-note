@@ -10,7 +10,7 @@ import androidx.room.PrimaryKey
  */
 
 @Entity(
-    tableName = "registered_notes",
+    tableName = "registered_transactions",
     indices = [Index("creation_date")]
 )
 data class RegisteredRoomTransaction(
