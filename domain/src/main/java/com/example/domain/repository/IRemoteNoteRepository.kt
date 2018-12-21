@@ -11,7 +11,7 @@ import com.example.domain.domainmodel.Result
 
 interface IRemoteNoteRepository{
 
-    suspend fun synchronizeTransactions(transactions: List<NoteTransaction>): Result<Exception, Boolean>
+    suspend fun synchronizeTransactions(transactions: List<NoteTransaction>): Result<Exception, Unit>
 
     suspend fun getNotes():Result<Exception, List<Note>>
 

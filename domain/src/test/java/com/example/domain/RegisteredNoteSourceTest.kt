@@ -107,4 +107,46 @@ class RegisteredNoteSourceTest {
         else assertTrue { false }
 
     }
+
+    /**
+     * if transactions found synch with remote and clear transactions cache
+     * */
+
+    @Test
+    fun `on get notes with transactions` () = runBlocking {
+
+        val testNotes = listOf(getNote(),getNote(),getNote())
+        val testTransactions = listOf(getTransaction(),getTransaction(),getTransaction())
+
+        every { locatorNote.remoteReg } returns noteRepository
+
+        every {locatorNote.transactionReg} returns transactionRepository
+
+        coEvery { transactionRepository.getTransactions() } returns Result.build {
+            testTransactions
+        }
+
+        coEvery { noteRepository.synchronizeTransactions(testTransactions) } returns Result.build {
+            Unit
+        }
+
+        coEvery { noteRepository.getNotes() }returns  Result.build {
+            testNotes
+        }
+
+        coEvery { transactionRepository.deleteTransactions() } returns Result.build {
+            Unit
+        }
+
+        val result = source.getNotes(locatorNote,dispatcher)
+
+        coVerify { noteRepository.getNotes() }
+        coVerify { transactionRepository.getTransactions() }
+        coVerify { transactionRepository.deleteTransactions() }
+        coVerify { noteRepository.synchronizeTransactions(testTransactions) }
+
+        if(result is Result.Value) assertEquals(result.value,testNotes)
+        else assertTrue { false }
+
+    }
 }
