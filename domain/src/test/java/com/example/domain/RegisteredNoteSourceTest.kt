@@ -205,7 +205,7 @@ class RegisteredNoteSourceTest {
      * */
 
     @Test
-    fun `on update note fail and register transaction success` () = runBlocking {
+    fun `on update note fail and register transaction to cache success` () = runBlocking {
 
         val testNote = getNote()
         val testTransaction = testNote.toTransaction(TransactionType.UPDATE)
@@ -236,7 +236,7 @@ class RegisteredNoteSourceTest {
      * */
 
     @Test
-    fun `on update note fail and register transaction fail` () = runBlocking {
+    fun `on update note fail and register transaction to cache fail` () = runBlocking {
         val testNote = getNote()
         val testTransaction = testNote.toTransaction(TransactionType.UPDATE)
 
@@ -257,6 +257,75 @@ class RegisteredNoteSourceTest {
         coVerify { transactionRepository.updateTransactions(testTransaction) }
 
         assertTrue { result is Result.Error }
+    }
 
+    @Test
+    fun `on delete note success` () = runBlocking {
+
+        val testNote = getNote()
+        every { locatorNote.remoteReg  } returns noteRepository
+
+        coEvery { noteRepository.deleteNote(testNote) } returns Result.build {
+            Unit
+        }
+
+        val result = source.deleteNote(testNote,locatorNote)
+
+        coVerify { noteRepository.deleteNote(testNote) }
+
+        if (result is Result.Value) assertTrue { true }
+        else assertTrue { false }
+    }
+
+    @Test
+    fun `on delete note fail and register transaction to cache success` () = runBlocking {
+
+        val testNote = getNote()
+        val testTransaction = testNote.toTransaction(TransactionType.DELETE)
+
+        every { locatorNote.remoteReg  } returns noteRepository
+        every { locatorNote.transactionReg } returns transactionRepository
+
+        coEvery { noteRepository.deleteNote(testNote) } returns Result.build {
+            throw  MiNoteError.RemoteIOException
+        }
+
+        coEvery { transactionRepository.updateTransactions(testTransaction) } returns Result.build {
+            Unit
+        }
+
+        val result = source.deleteNote(testNote,locatorNote)
+
+        coVerify { noteRepository.deleteNote(testNote) }
+        coVerify { transactionRepository.updateTransactions(testTransaction) }
+
+        if (result is Result.Value) assertTrue { true }
+        else assertTrue { false }
+
+    }
+
+    @Test
+    fun `on delete note fail and register transaction to cache fail` () = runBlocking {
+
+        val testNote = getNote()
+        val testTransaction = testNote.toTransaction(TransactionType.DELETE)
+
+        every { locatorNote.remoteReg  } returns noteRepository
+        every { locatorNote.transactionReg } returns transactionRepository
+
+        coEvery { noteRepository.deleteNote(testNote) } returns Result.build {
+            throw  MiNoteError.RemoteIOException
+        }
+
+        coEvery { transactionRepository.updateTransactions(testTransaction) } returns Result.build {
+            throw MiNoteError.TransactionError
+        }
+
+        val result = source.deleteNote(testNote,locatorNote)
+
+        coVerify { noteRepository.deleteNote(testNote) }
+        coVerify { transactionRepository.updateTransactions(testTransaction) }
+
+        assertTrue { result is Result.Error }
     }
 }
