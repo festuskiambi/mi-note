@@ -14,5 +14,5 @@ interface ITransactionRepository {
 
     suspend fun deleteTransactions(): Result<Exception, Unit>
 
-    suspend fun updateTransactions(): Result<Exception, Unit>
+    suspend fun updateTransactions(transaction: NoteTransaction): Result<Exception, Unit>
 }

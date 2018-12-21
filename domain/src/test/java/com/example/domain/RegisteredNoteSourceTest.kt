@@ -5,6 +5,7 @@ import com.example.domain.domainmodel.NoteTransaction
 import com.example.domain.domainmodel.Result
 import com.example.domain.domainmodel.TransactionType
 import com.example.domain.domainmodel.User
+import com.example.domain.error.MiNoteError
 import com.example.domain.interactor.RegisteredNoteSource
 import com.example.domain.repository.IRemoteNoteRepository
 import com.example.domain.repository.ITransactionRepository
@@ -21,7 +22,6 @@ import kotlin.test.assertTrue
  */
 class RegisteredNoteSourceTest {
 
-    val dispatcher: DispatcherProvider = mockk()
     val locatorNote: NoteServiceLocator = mockk()
     val source = RegisteredNoteSource()
     val noteRepository: IRemoteNoteRepository = mockk()
@@ -68,7 +68,6 @@ class RegisteredNoteSourceTest {
     @BeforeEach
     fun setUp() {
         clearMocks()
-        every { dispatcher.provideIOContext() } returns Dispatchers.Unconfined
     }
 
 
@@ -98,7 +97,7 @@ class RegisteredNoteSourceTest {
             testNotes
         }
 
-        val result = source.getNotes(locatorNote,dispatcher)
+        val result = source.getNotes(locatorNote)
 
         coVerify { transactionRepository.getTransactions() }
         coVerify { noteRepository.getNotes()}
@@ -138,7 +137,7 @@ class RegisteredNoteSourceTest {
             Unit
         }
 
-        val result = source.getNotes(locatorNote,dispatcher)
+        val result = source.getNotes(locatorNote)
 
         coVerify { noteRepository.getNotes() }
         coVerify { transactionRepository.getTransactions() }
@@ -147,6 +146,46 @@ class RegisteredNoteSourceTest {
 
         if(result is Result.Value) assertEquals(result.value,testNotes)
         else assertTrue { false }
-
     }
+
+    @Test
+    fun `on get note by id success`() = runBlocking {
+
+        val testId = getNote().creationDate
+
+
+        every{ locatorNote.remoteReg} returns noteRepository
+
+        coEvery { noteRepository.getNote(testId) } returns Result.build {
+            getNote()
+        }
+
+        val result = source.getNoteById(testId,locatorNote)
+
+        coVerify { noteRepository.getNote(testId) }
+
+        if(result is Result.Value) assertEquals(result.value,getNote())
+        else assertTrue { false }
+    }
+
+    @Test
+    fun `on get note by id fail` () = runBlocking {
+
+        val testId = getNote().creationDate
+
+        every { locatorNote.remoteReg } returns noteRepository
+
+        coEvery { noteRepository.getNote(testId) } returns Result.build {
+            throw MiNoteError.RemoteIOException
+        }
+
+        val result = source.getNoteById(testId,locatorNote)
+
+        coVerify { noteRepository.getNote(testId) }
+
+        assertTrue { result is Result.Error }
+    }
+
+    @Test
+    fun `on update note success` () = runBlocking {  }
 }

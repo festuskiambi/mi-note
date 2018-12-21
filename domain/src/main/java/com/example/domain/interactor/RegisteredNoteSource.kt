@@ -2,9 +2,8 @@ package com.example.domain.interactor
 
 import com.example.domain.DispatcherProvider
 import com.example.domain.NoteServiceLocator
-import com.example.domain.domainmodel.Note
-import com.example.domain.domainmodel.NoteTransaction
-import com.example.domain.domainmodel.Result
+import com.example.domain.domainmodel.*
+
 import com.example.domain.repository.IRemoteNoteRepository
 import com.example.domain.repository.ITransactionRepository
 import kotlinx.coroutines.async
@@ -17,8 +16,7 @@ import kotlinx.coroutines.coroutineScope
 class RegisteredNoteSource {
 
     suspend fun getNotes(
-        locator: NoteServiceLocator,
-        dispatcher: DispatcherProvider
+        locator: NoteServiceLocator
     ): Result<Exception, List<Note>> {
 
         val transactionResult = locator.transactionReg.getTransactions()
@@ -48,9 +46,9 @@ class RegisteredNoteSource {
     ) {
         val synchronizationResult = remoteReg.synchronizeTransactions(transactions)
 
-        when(synchronizationResult){
-             is Result.Value -> transactionReg.deleteTransactions()
-            is Result.Error ->{
+        when (synchronizationResult) {
+            is Result.Value -> transactionReg.deleteTransactions()
+            is Result.Error -> {
 
             }
         }
@@ -59,40 +57,31 @@ class RegisteredNoteSource {
 
     suspend fun getNoteById(
         id: String,
-        locator: NoteServiceLocator,
-        dispatcher: DispatcherProvider
-    ): Result<Exception, Note?> = coroutineScope {
+        locator: NoteServiceLocator
+    ): Result<Exception, Note?> {
 
-        val localResult = async(dispatcher.provideIOContext()) {
-            locator.remoteReg.getNote(id)
-        }
-
-        localResult.await()
+        return locator.remoteReg.getNote(id)
     }
 
     suspend fun updateNote(
         note: Note,
-        locator: NoteServiceLocator,
-        dispatcher: DispatcherProvider
-    ): Result<Exception, Boolean> = coroutineScope {
+        locator: NoteServiceLocator
+    ): Result<Exception, Unit> {
 
-        val localResult = async(dispatcher.provideIOContext()) {
-            locator.remoteReg.updateNote(note)
-        }
+        val remoteResult = locator.remoteReg.updateNote(note)
 
-        localResult.await()
+        return if (remoteResult is Result.Value) remoteResult
+        else locator.transactionReg.updateTransactions(note.toTransaction(TransactionType.UPDATE))
     }
 
     suspend fun deleteNote(
         note: Note,
-        locator: NoteServiceLocator,
-        dispatcher: DispatcherProvider
-    ): Result<Exception, Boolean> = coroutineScope {
+        locator: NoteServiceLocator
+    ): Result<Exception, Unit> {
 
-        val localResult = async(dispatcher.provideIOContext()) {
-            locator.remoteReg.deleteNote(note)
-        }
+        val remoteResult = locator.remoteReg.deleteNote(note)
 
-        localResult.await()
+        return if (remoteResult is Result.Value) remoteResult
+        else locator.transactionReg.updateTransactions(note.toTransaction(TransactionType.DELETE))
     }
 }

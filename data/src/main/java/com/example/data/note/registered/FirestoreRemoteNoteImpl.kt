@@ -11,7 +11,7 @@ import com.google.firebase.database.FirebaseDatabase
  * Created by Festus Kiambi on 12/4/18.
  */
 class FirestoreRemoteNoteImpl : IRemoteNoteRepository{
-    override suspend fun synchronizeTransactions(transactions: List<NoteTransaction>): Result<Exception, Boolean> {
+    override suspend fun synchronizeTransactions(transactions: List<NoteTransaction>): Result<Exception, Unit> {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
