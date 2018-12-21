@@ -2,6 +2,7 @@ package com.example.festus.mi_note.notedetail
 
 import com.example.domain.DispatcherProvider
 import com.example.domain.NoteServiceLocator
+import com.example.domain.UserServiceLocator
 import com.example.domain.domainmodel.Note
 import com.example.domain.domainmodel.Result
 import com.example.domain.interactor.AnonymousNoteSource
@@ -20,7 +21,8 @@ import kotlin.coroutines.CoroutineContext
  */
 class NoteDetailLogic(
     dispatcher: DispatcherProvider,
-    locator: NoteServiceLocator,
+    val userServiceLocator: UserServiceLocator,
+    val locator: NoteServiceLocator,
     val vModel: INoteDetailContract.ViewModel,
     val view: INoteDetailContract.View,
     val anonymous: AnonymousNoteSource,
@@ -29,7 +31,7 @@ class NoteDetailLogic(
     val authSource: AuthSource,
     id: String,
     isPrivate: Boolean
-) : BaseLogic(dispatcher, locator), INoteDetailContract.Logic, CoroutineScope {
+) : BaseLogic(dispatcher), INoteDetailContract.Logic, CoroutineScope {
 
     init {
         vModel.setId(id)
@@ -51,7 +53,7 @@ class NoteDetailLogic(
 
     fun onDoneClick() = launch {
 
-        val userResult = authSource.getCurrentUser(locator)
+        val userResult = authSource.getCurrentUser(userServiceLocator)
 
         when (userResult) {
             is Result.Value -> prepareRegistereedRepoUpdate()

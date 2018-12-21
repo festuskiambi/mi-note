@@ -2,6 +2,7 @@ package com.example.festus.mi_note.login
 
 import com.example.domain.DispatcherProvider
 import com.example.domain.NoteServiceLocator
+import com.example.domain.UserServiceLocator
 import com.example.domain.interactor.AuthSource
 import com.example.domain.domainmodel.Result
 import com.example.festus.mi_note.common.BaseLogic
@@ -15,10 +16,10 @@ import kotlin.coroutines.CoroutineContext
  */
 class LoginLogic(
     dispatcher: DispatcherProvider,
-    locator: NoteServiceLocator,
+    val locator: UserServiceLocator,
     val view: ILoginContract.View,
     val authSource: AuthSource
-) : BaseLogic(dispatcher, locator), CoroutineScope, ILoginContract.Logic {
+) : BaseLogic(dispatcher), CoroutineScope, ILoginContract.Logic {
 
     init {
         jobTracker = Job()

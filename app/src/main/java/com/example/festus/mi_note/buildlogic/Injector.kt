@@ -10,6 +10,7 @@ import com.example.data.note.registered.FirestoreRemoteNoteImpl
 import com.example.data.transaction.RoomTransactionRepositoryImpl
 import com.example.domain.DispatcherProvider
 import com.example.domain.NoteServiceLocator
+import com.example.domain.UserServiceLocator
 import com.example.domain.interactor.AnonymousNoteSource
 import com.example.domain.interactor.AuthSource
 import com.example.domain.interactor.PublicNoteSource
@@ -68,7 +69,8 @@ class Injector(private val activityContext: Context) {
 //            NoteListAdapter(),
 //            view,
 //            AnonymousNoteSource(),
-//            RegisteredNoteSource(),                PublicNoteSource(),
+//            RegisteredNoteSource(),
+//            PublicNoteSource(),
 //            AuthSource()
 //        )
 //    }
@@ -76,25 +78,25 @@ class Injector(private val activityContext: Context) {
     fun provideLoginLogic(view: LoginActivity): ILoginContract.Logic {
         return LoginLogic(
             DispatcherProvider,
-            NoteServiceLocator(localAnon, remoteReg, transactionReg, auth),
+            UserServiceLocator(auth),
             view,
             AuthSource()
         )
     }
 
-    fun provideNoteDetailLogic(view: NoteDetailView, id: String, isPrivate:Boolean): INoteDetailContract.Logic {
-        return NoteDetailLogic(
-            DispatcherProvider,
-            NoteServiceLocator(localAnon, remoteReg, transactionReg, auth),
-            ViewModelProviders.of(activityContext as NoteDetailActivity)
-                .get(NoteDetailViewModel::class.java),
-            view,
-            AnonymousNoteSource(),
-            RegisteredNoteSource(),
-            PublicNoteSource(),
-            AuthSource(),
-            id,
-            isPrivate
-        )
-    }
+//    fun provideNoteDetailLogic(view: NoteDetailView, id: String, isPrivate:Boolean): INoteDetailContract.Logic {
+//        return NoteDetailLogic(
+//            DispatcherProvider,
+//            NoteServiceLocator(localAnon, remoteReg, transactionReg),
+//            ViewModelProviders.of(activityContext as NoteDetailActivity)
+//                .get(NoteDetailViewModel::class.java),
+//            view,
+//            AnonymousNoteSource(),
+//            RegisteredNoteSource(),
+//            PublicNoteSource(),
+//            AuthSource(),
+//            id,
+//            isPrivate
+//        )
+//    }
 }
