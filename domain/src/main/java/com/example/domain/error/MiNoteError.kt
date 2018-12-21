@@ -9,6 +9,9 @@ sealed class MiNoteError: Exception() {
     object RemoteIOException: MiNoteError()
     object NetworkUnavailableException: MiNoteError()
     object AuthError: MiNoteError()
+    object TransactionError : MiNoteError() {
+
+    }
 
 }
 

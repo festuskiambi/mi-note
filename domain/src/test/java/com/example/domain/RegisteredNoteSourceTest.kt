@@ -1,16 +1,11 @@
 package com.example.domain
 
-import com.example.domain.domainmodel.Note
-import com.example.domain.domainmodel.NoteTransaction
-import com.example.domain.domainmodel.Result
-import com.example.domain.domainmodel.TransactionType
-import com.example.domain.domainmodel.User
+import com.example.domain.domainmodel.*
 import com.example.domain.error.MiNoteError
 import com.example.domain.interactor.RegisteredNoteSource
 import com.example.domain.repository.IRemoteNoteRepository
 import com.example.domain.repository.ITransactionRepository
 import io.mockk.*
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -100,9 +95,9 @@ class RegisteredNoteSourceTest {
         val result = source.getNotes(locatorNote)
 
         coVerify { transactionRepository.getTransactions() }
-        coVerify { noteRepository.getNotes()}
+        coVerify { noteRepository.getNotes() }
 
-        if(result is Result.Value) assertEquals(result.value,testNotes)
+        if (result is Result.Value) assertEquals(result.value, testNotes)
         else assertTrue { false }
 
     }
@@ -112,14 +107,14 @@ class RegisteredNoteSourceTest {
      * */
 
     @Test
-    fun `on get notes with transactions` () = runBlocking {
+    fun `on get notes with transactions`() = runBlocking {
 
-        val testNotes = listOf(getNote(),getNote(),getNote())
-        val testTransactions = listOf(getTransaction(),getTransaction(),getTransaction())
+        val testNotes = listOf(getNote(), getNote(), getNote())
+        val testTransactions = listOf(getTransaction(), getTransaction(), getTransaction())
 
         every { locatorNote.remoteReg } returns noteRepository
 
-        every {locatorNote.transactionReg} returns transactionRepository
+        every { locatorNote.transactionReg } returns transactionRepository
 
         coEvery { transactionRepository.getTransactions() } returns Result.build {
             testTransactions
@@ -129,7 +124,7 @@ class RegisteredNoteSourceTest {
             Unit
         }
 
-        coEvery { noteRepository.getNotes() }returns  Result.build {
+        coEvery { noteRepository.getNotes() } returns Result.build {
             testNotes
         }
 
@@ -144,7 +139,7 @@ class RegisteredNoteSourceTest {
         coVerify { transactionRepository.deleteTransactions() }
         coVerify { noteRepository.synchronizeTransactions(testTransactions) }
 
-        if(result is Result.Value) assertEquals(result.value,testNotes)
+        if (result is Result.Value) assertEquals(result.value, testNotes)
         else assertTrue { false }
     }
 
@@ -154,22 +149,22 @@ class RegisteredNoteSourceTest {
         val testId = getNote().creationDate
 
 
-        every{ locatorNote.remoteReg} returns noteRepository
+        every { locatorNote.remoteReg } returns noteRepository
 
         coEvery { noteRepository.getNote(testId) } returns Result.build {
             getNote()
         }
 
-        val result = source.getNoteById(testId,locatorNote)
+        val result = source.getNoteById(testId, locatorNote)
 
         coVerify { noteRepository.getNote(testId) }
 
-        if(result is Result.Value) assertEquals(result.value,getNote())
+        if (result is Result.Value) assertEquals(result.value, getNote())
         else assertTrue { false }
     }
 
     @Test
-    fun `on get note by id fail` () = runBlocking {
+    fun `on get note by id fail`() = runBlocking {
 
         val testId = getNote().creationDate
 
@@ -179,7 +174,7 @@ class RegisteredNoteSourceTest {
             throw MiNoteError.RemoteIOException
         }
 
-        val result = source.getNoteById(testId,locatorNote)
+        val result = source.getNoteById(testId, locatorNote)
 
         coVerify { noteRepository.getNote(testId) }
 
@@ -187,5 +182,81 @@ class RegisteredNoteSourceTest {
     }
 
     @Test
-    fun `on update note success` () = runBlocking {  }
+    fun `on update note success`() = runBlocking {
+
+        val testNote = getNote()
+
+        every { locatorNote.remoteReg } returns noteRepository
+
+        coEvery { noteRepository.updateNote(testNote) } returns Result.build {
+            Unit
+        }
+
+        val result = source.updateNote(testNote, locatorNote)
+
+        coVerify { noteRepository.updateNote(testNote) }
+
+        if (result is Result.Value) assertTrue { true }
+        else assertTrue { false }
+    }
+
+    /**
+     * if a request to update a note fails  throw an error and register the transaction in the transaction cache
+     * */
+
+    @Test
+    fun `on update note fail and register transaction success` () = runBlocking {
+
+        val testNote = getNote()
+        val testTransaction = testNote.toTransaction(TransactionType.UPDATE)
+
+        every { locatorNote.remoteReg  } returns noteRepository
+        every { locatorNote.transactionReg } returns transactionRepository
+
+        coEvery { noteRepository.updateNote(testNote) } returns Result.build {
+            throw  MiNoteError.RemoteIOException
+        }
+
+        coEvery { transactionRepository.updateTransactions(testTransaction) } returns Result.build {
+            Unit
+        }
+
+        val result = source.updateNote(testNote,locatorNote)
+
+        coVerify { noteRepository.updateNote(testNote) }
+        coVerify { transactionRepository.updateTransactions(testTransaction) }
+
+        if (result is Result.Value) assertTrue { true }
+        else assertTrue { false }
+    }
+
+    /**
+     * if a request to update a note fails and also a request to register  a transaction fails throw an error
+     * for both requests
+     * */
+
+    @Test
+    fun `on update note fail and register transaction fail` () = runBlocking {
+        val testNote = getNote()
+        val testTransaction = testNote.toTransaction(TransactionType.UPDATE)
+
+        every { locatorNote.remoteReg  } returns noteRepository
+        every { locatorNote.transactionReg } returns transactionRepository
+
+        coEvery { noteRepository.updateNote(testNote) } returns Result.build {
+            throw  MiNoteError.RemoteIOException
+        }
+
+        coEvery { transactionRepository.updateTransactions(testTransaction) } returns Result.build {
+            throw MiNoteError.TransactionError
+        }
+
+        val result = source.updateNote(testNote,locatorNote)
+
+        coVerify { noteRepository.updateNote(testNote) }
+        coVerify { transactionRepository.updateTransactions(testTransaction) }
+
+        assertTrue { result is Result.Error }
+
+    }
 }
