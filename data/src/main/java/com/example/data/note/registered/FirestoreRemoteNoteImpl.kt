@@ -25,11 +25,11 @@ class FirestoreRemoteNoteImpl : IRemoteNoteRepository{
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override suspend fun deleteNote(note: Note): Result<Exception, Boolean> {
+    override suspend fun deleteNote(note: Note): Result<Exception, Unit> {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override suspend fun updateNote(note: Note): Result<Exception, Boolean> {
+    override suspend fun updateNote(note: Note): Result<Exception, Unit> {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 

@@ -17,7 +17,7 @@ class RoomTransactionRepositoryImpl(): ITransactionRepository{
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override suspend fun updateTransactions(toTransaction: NoteTransaction): Result<Exception, Unit> {
+    override suspend fun updateTransactions(transaction: NoteTransaction): Result<Exception, Unit> {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 

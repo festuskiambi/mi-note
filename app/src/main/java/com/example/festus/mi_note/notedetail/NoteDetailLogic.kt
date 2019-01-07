@@ -79,7 +79,7 @@ class NoteDetailLogic(
     private suspend fun prepareRegistereedRepoUpdate() {
         val updatedNote = vModel.getNoteState()!!.copy(contents = view.getNoteBody())
 
-        val result = registered.updateNote(updatedNote, locator, dispatcher)
+        val result = registered.updateNote(updatedNote, locator)
 
         when (result) {
             is Result.Value -> view.startListFeature()

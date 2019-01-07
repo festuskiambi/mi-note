@@ -2,6 +2,7 @@ package com.example.festus.mi_note
 
 import com.example.domain.DispatcherProvider
 import com.example.domain.NoteServiceLocator
+import com.example.domain.UserServiceLocator
 import com.example.domain.domainmodel.Result
 import com.example.domain.domainmodel.User
 import com.example.domain.error.MiNoteError
@@ -25,7 +26,7 @@ class LoginLogicTest {
 
     private val dispatcher: DispatcherProvider = mockk()
 
-    private val locator: NoteServiceLocator = mockk()
+    private val locator: UserServiceLocator = mockk()
 
     private val view: ILoginContract.View = mockk(relaxed = true)
 
