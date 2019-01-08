@@ -4,20 +4,23 @@ import com.example.domain.DispatcherProvider
 import com.example.domain.NoteServiceLocator
 import com.example.domain.UserServiceLocator
 import com.example.domain.domainmodel.Note
+import com.example.domain.domainmodel.Result
 import com.example.domain.domainmodel.User
 import com.example.domain.interactor.AnonymousNoteSource
 import com.example.domain.interactor.AuthSource
 import com.example.domain.interactor.PublicNoteSource
 import com.example.domain.interactor.RegisteredNoteSource
+import com.example.festus.mi_note.common.MODE_PRIVATE
 import com.example.festus.mi_note.notelist.INoteListContract
 import com.example.festus.mi_note.notelist.NoteListAdapter
+import com.example.festus.mi_note.notelist.NoteListEvent
 import com.example.festus.mi_note.notelist.NoteListLogic
-import io.mockk.clearMocks
-import io.mockk.every
+import io.mockk.*
 import io.mockk.impl.annotations.RelaxedMockK
-import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 
 /**
  * Created by Festus Kiambi on 12/21/18.
@@ -63,7 +66,7 @@ class NoteListLogicTest {
         profilePicUrl: String = ""
     ) = User(uid, name, profilePicUrl)
 
-   private val getNoteList = listOf(getNote(), getNote(), getNote())
+    private val getNoteList = listOf(getNote(), getNote(), getNote())
 
     private val logic = NoteListLogic(
         dispatcher,
@@ -79,12 +82,54 @@ class NoteListLogicTest {
         auth
     )
 
-
     @BeforeEach
     fun setUp() {
         clearMocks()
         every { dispatcher.provideUIContext() } returns Dispatchers.Unconfined
 
+    }
+
+    /**
+     * New notes can be created when in two states either private or public mode
+     *
+     * */
+
+    @Test
+    fun `on new note click in private mode`() {
+        every { vModel.getIsPrivate() } returns true
+
+        logic.event(NoteListEvent.OnNewNoteClick)
+
+        verify { navigator.startNoteDetailFeatureWithExtras("", true) }
+    }
+
+    @Test
+    fun `on new note click in public mode` () {
+
+        every { vModel.getIsPrivate() } returns false
+
+        logic.event(NoteListEvent.OnNewNoteClick)
+
+        verify { navigator.startNoteDetailFeatureWithExtras("",isPrivate = false) }
+    }
+
+    /**
+     * on bind view is called by the view oncreate and the user can be either anonymous or registered,
+     * save the user state in the vModel and make initializations
+     *
+     * */
+    @Test
+    fun `onBind event with an anonymous user`() = runBlocking {
+
+        coEvery { auth.getCurrentUser(userLocater) } returns Result.build { null }
+
+        logic.event(NoteListEvent.OnBind)
+
+        coVerify { auth.getCurrentUser(userLocater) }
+        verify { vModel.setUserState(null) }
+        verify { view.showLoadingView() }
+        verify { view.setToolbarTitle(MODE_PRIVATE) }
+        verify { adapter.logic = logic }
     }
 
 }

@@ -29,11 +29,19 @@ class NoteListLogic(
     val authSource: AuthSource
     ): BaseLogic(dispatcher), INoteListContract.Logic, CoroutineScope{
 
-    override fun event(event: NoteListEvent<Int>) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
     override val coroutineContext: CoroutineContext
         get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
+
+
+    override fun event(event: NoteListEvent<Int>) {
+        when(event){
+            is NoteListEvent.OnNewNoteClick -> onNewNoteClick()
+        }
+    }
+
+    private fun onNewNoteClick() {
+        navigator.startNoteDetailFeatureWithExtras("",vModel.getIsPrivate())
+    }
+
 
 }
