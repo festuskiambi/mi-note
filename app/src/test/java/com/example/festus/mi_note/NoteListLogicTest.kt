@@ -34,7 +34,7 @@ class NoteListLogicTest {
     private val vModel: INoteListContract.ViewModel = mockk(relaxed = true)
     private val view: INoteListContract.View = mockk(relaxed = true)
     private val navigator: INoteListContract.Navigator = mockk(relaxed = true)
-    private val adapter: NoteListAdapter = mockk()
+    private val adapter: NoteListAdapter = mockk(relaxed = true)
     private val anonymous: AnonymousNoteSource = mockk()
     private val registered: RegisteredNoteSource = mockk()
     private val public: PublicNoteSource = mockk()
@@ -104,13 +104,13 @@ class NoteListLogicTest {
     }
 
     @Test
-    fun `on new note click in public mode` () {
+    fun `on new note click in public mode`() {
 
         every { vModel.getIsPrivate() } returns false
 
         logic.event(NoteListEvent.OnNewNoteClick)
 
-        verify { navigator.startNoteDetailFeatureWithExtras("",isPrivate = false) }
+        verify { navigator.startNoteDetailFeatureWithExtras("", isPrivate = false) }
     }
 
     /**
@@ -131,6 +131,140 @@ class NoteListLogicTest {
         verify { view.setToolbarTitle(MODE_PRIVATE) }
         verify { adapter.logic = logic }
     }
+
+    @Test
+    fun `onBind event with a registered user`() = runBlocking {
+        val user = getUser()
+        coEvery { auth.getCurrentUser(userLocater) } returns Result.build {
+            user
+        }
+
+        logic.event(NoteListEvent.OnBind)
+
+        coVerify { auth.getCurrentUser(userLocater) }
+        verify { vModel.setUserState(user) }
+        verify { view.showLoadingView() }
+        verify { view.setAdapter(adapter) }
+        verify { view.setToolbarTitle(MODE_PRIVATE) }
+        verify { adapter.logic = logic }
+    }
+
+    /**
+     * on start is called to render the ui. the possible scenarios include     *
+     * a.user is in private mode either registered or anonymous
+     * b.user is in public mode(registered only)     *
+     *
+     * */
+
+    @Test
+    fun `on start with anonymous user in private mode`() = runBlocking {
+        every { vModel.getIsPrivate() } returns true
+        every { vModel.getUserState() } returns null
+        coEvery { anonymous.getNotes(noteLocator,dispatcher) } returns Result.build {
+            getNoteList
+        }
+
+        logic.event(NoteListEvent.OnStart)
+        verify { vModel.getIsPrivate() }
+        verify { vModel.getUserState() }
+        verify { view.showNoteList() }
+        verify { adapter.submitList(getNoteList) }
+        coVerify { anonymous.getNotes(noteLocator,dispatcher) }
+    }
+
+    @Test
+    fun `on start with registered user in private mode` () = runBlocking {
+        every { vModel.getIsPrivate() } returns true
+        every { vModel.getUserState() } returns getUser()
+        coEvery { registered.getNotes(noteLocator) } returns Result.build {
+            getNoteList
+        }
+
+        logic.event(NoteListEvent.OnStart)
+
+        verify { vModel.getIsPrivate() }
+        verify { vModel.getUserState() }
+        verify { view.showNoteList() }
+        verify { adapter.submitList(getNoteList) }
+        coVerify { registered.getNotes(noteLocator) }
+    }
+
+    @Test
+    fun `on start in private mode with empty note list  `() = runBlocking {
+        every { vModel.getIsPrivate()} returns true
+        every { vModel.getUserState() } returns getUser()
+        coEvery { registered.getNotes(noteLocator) } returns Result.build { emptyList<Note>() }
+
+        logic.event(NoteListEvent.OnStart)
+
+        verify { vModel.getIsPrivate() }
+        verify { vModel.getUserState() }
+        verify { view.showEmptyState() }
+        coVerify { registered.getNotes(noteLocator) }
+
+    }
+
+
+    @Test
+    fun `on start in public mode` () = runBlocking {
+        every { vModel.getIsPrivate() } returns false
+        coEvery { public.getNotes(noteLocator,dispatcher) } returns Result.build {
+            getNoteList
+        }
+
+        logic.event(NoteListEvent.OnStart)
+
+        verify { vModel.getIsPrivate() }
+        verify { view.showNoteList() }
+        verify { adapter.submitList(getNoteList) }
+        coVerify { public.getNotes(noteLocator,dispatcher) }
+    }
+
+    /**
+     * when the login button is clicked start the login feature
+     *
+     * */
+
+    @Test
+    fun `on login click` (){
+
+        logic.event(NoteListEvent.OnLoginClick)
+
+        verify { navigator.startLoginFeature() }
+    }
+
+    /**
+     * a note item can be clicked when in private mode or public mode.
+     * when its clicked start the notedetail feature
+     *      *
+     * */
+
+    @Test
+    fun `on a note item  click in private mode ` ()  {
+        every { vModel.getIsPrivate() } returns true
+        every { vModel.getAdapterState() } returns getNoteList
+
+        val clickEvent = NoteListEvent.OnNoteItemClick(0)
+
+        logic.event(clickEvent)
+        verify { vModel.getIsPrivate() }
+        verify { navigator.startNoteDetailFeatureWithExtras(getNote().creationDate,true) }
+        verify { vModel.getAdapterState() }
+    }
+
+    @Test
+    fun `on a note item  click in public mode ` ()  {
+        every { vModel.getIsPrivate() } returns false
+        every { vModel.getAdapterState() } returns getNoteList
+
+        val clickEvent = NoteListEvent.OnNoteItemClick(0)
+
+        logic.event(clickEvent)
+        verify { vModel.getIsPrivate() }
+        verify { navigator.startNoteDetailFeatureWithExtras(getNote().creationDate,false) }
+        verify { vModel.getAdapterState() }
+    }
+
 
 }
 
