@@ -6,6 +6,7 @@ import com.example.domain.interactor.RegisteredNoteSource
 import com.example.domain.repository.IRemoteNoteRepository
 import com.example.domain.repository.ITransactionRepository
 import io.mockk.*
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -17,6 +18,7 @@ import kotlin.test.assertTrue
  */
 class RegisteredNoteSourceTest {
 
+    val dispatcher: DispatcherProvider = mockk()
     val locatorNote: NoteServiceLocator = mockk()
     val source = RegisteredNoteSource()
     val noteRepository: IRemoteNoteRepository = mockk()
@@ -63,6 +65,7 @@ class RegisteredNoteSourceTest {
     @BeforeEach
     fun setUp() {
         clearMocks()
+        every { dispatcher.provideIOContext() } returns Dispatchers.Unconfined
     }
 
 
@@ -92,7 +95,7 @@ class RegisteredNoteSourceTest {
             testNotes
         }
 
-        val result = source.getNotes(locatorNote)
+        val result = source.getNotes(locatorNote, dispatcher)
 
         coVerify { transactionRepository.getTransactions() }
         coVerify { noteRepository.getNotes() }
@@ -132,7 +135,7 @@ class RegisteredNoteSourceTest {
             Unit
         }
 
-        val result = source.getNotes(locatorNote)
+        val result = source.getNotes(locatorNote, dispatcher)
 
         coVerify { noteRepository.getNotes() }
         coVerify { transactionRepository.getTransactions() }
@@ -145,21 +148,21 @@ class RegisteredNoteSourceTest {
 
     @Test
     fun `on get note by id success`() = runBlocking {
-
-        val testId = getNote().creationDate
+        val testNote = getNote()
+        val testId = testNote.creationDate
 
 
         every { locatorNote.remoteReg } returns noteRepository
 
         coEvery { noteRepository.getNote(testId) } returns Result.build {
-            getNote()
+            testNote
         }
 
-        val result = source.getNoteById(testId, locatorNote)
+        val result = source.getNoteById(testId, locatorNote, dispatcher)
 
         coVerify { noteRepository.getNote(testId) }
 
-        if (result is Result.Value) assertEquals(result.value, getNote())
+        if (result is Result.Value) assertEquals(result.value, testNote)
         else assertTrue { false }
     }
 
@@ -174,7 +177,7 @@ class RegisteredNoteSourceTest {
             throw MiNoteError.RemoteIOException
         }
 
-        val result = source.getNoteById(testId, locatorNote)
+        val result = source.getNoteById(testId, locatorNote, dispatcher)
 
         coVerify { noteRepository.getNote(testId) }
 
@@ -192,7 +195,7 @@ class RegisteredNoteSourceTest {
             Unit
         }
 
-        val result = source.updateNote(testNote, locatorNote)
+        val result = source.updateNote(testNote, locatorNote, dispatcher)
 
         coVerify { noteRepository.updateNote(testNote) }
 
@@ -205,12 +208,12 @@ class RegisteredNoteSourceTest {
      * */
 
     @Test
-    fun `on update note fail and register transaction to cache success` () = runBlocking {
+    fun `on update note fail and register transaction to cache success`() = runBlocking {
 
         val testNote = getNote()
         val testTransaction = testNote.toTransaction(TransactionType.UPDATE)
 
-        every { locatorNote.remoteReg  } returns noteRepository
+        every { locatorNote.remoteReg } returns noteRepository
         every { locatorNote.transactionReg } returns transactionRepository
 
         coEvery { noteRepository.updateNote(testNote) } returns Result.build {
@@ -221,7 +224,7 @@ class RegisteredNoteSourceTest {
             Unit
         }
 
-        val result = source.updateNote(testNote,locatorNote)
+        val result = source.updateNote(testNote, locatorNote,dispatcher)
 
         coVerify { noteRepository.updateNote(testNote) }
         coVerify { transactionRepository.updateTransactions(testTransaction) }
@@ -236,11 +239,11 @@ class RegisteredNoteSourceTest {
      * */
 
     @Test
-    fun `on update note fail and register transaction to cache fail` () = runBlocking {
+    fun `on update note fail and register transaction to cache fail`() = runBlocking {
         val testNote = getNote()
         val testTransaction = testNote.toTransaction(TransactionType.UPDATE)
 
-        every { locatorNote.remoteReg  } returns noteRepository
+        every { locatorNote.remoteReg } returns noteRepository
         every { locatorNote.transactionReg } returns transactionRepository
 
         coEvery { noteRepository.updateNote(testNote) } returns Result.build {
@@ -251,7 +254,7 @@ class RegisteredNoteSourceTest {
             throw MiNoteError.TransactionError
         }
 
-        val result = source.updateNote(testNote,locatorNote)
+        val result = source.updateNote(testNote, locatorNote,dispatcher)
 
         coVerify { noteRepository.updateNote(testNote) }
         coVerify { transactionRepository.updateTransactions(testTransaction) }
@@ -260,16 +263,16 @@ class RegisteredNoteSourceTest {
     }
 
     @Test
-    fun `on delete note success` () = runBlocking {
+    fun `on delete note success`() = runBlocking {
 
         val testNote = getNote()
-        every { locatorNote.remoteReg  } returns noteRepository
+        every { locatorNote.remoteReg } returns noteRepository
 
         coEvery { noteRepository.deleteNote(testNote) } returns Result.build {
             Unit
         }
 
-        val result = source.deleteNote(testNote,locatorNote)
+        val result = source.deleteNote(testNote, locatorNote,dispatcher)
 
         coVerify { noteRepository.deleteNote(testNote) }
 
@@ -278,12 +281,12 @@ class RegisteredNoteSourceTest {
     }
 
     @Test
-    fun `on delete note fail and register transaction to cache success` () = runBlocking {
+    fun `on delete note fail and register transaction to cache success`() = runBlocking {
 
         val testNote = getNote()
         val testTransaction = testNote.toTransaction(TransactionType.DELETE)
 
-        every { locatorNote.remoteReg  } returns noteRepository
+        every { locatorNote.remoteReg } returns noteRepository
         every { locatorNote.transactionReg } returns transactionRepository
 
         coEvery { noteRepository.deleteNote(testNote) } returns Result.build {
@@ -294,7 +297,7 @@ class RegisteredNoteSourceTest {
             Unit
         }
 
-        val result = source.deleteNote(testNote,locatorNote)
+        val result = source.deleteNote(testNote, locatorNote,dispatcher)
 
         coVerify { noteRepository.deleteNote(testNote) }
         coVerify { transactionRepository.updateTransactions(testTransaction) }
@@ -305,12 +308,12 @@ class RegisteredNoteSourceTest {
     }
 
     @Test
-    fun `on delete note fail and register transaction to cache fail` () = runBlocking {
+    fun `on delete note fail and register transaction to cache fail`() = runBlocking {
 
         val testNote = getNote()
         val testTransaction = testNote.toTransaction(TransactionType.DELETE)
 
-        every { locatorNote.remoteReg  } returns noteRepository
+        every { locatorNote.remoteReg } returns noteRepository
         every { locatorNote.transactionReg } returns transactionRepository
 
         coEvery { noteRepository.deleteNote(testNote) } returns Result.build {
@@ -321,7 +324,7 @@ class RegisteredNoteSourceTest {
             throw MiNoteError.TransactionError
         }
 
-        val result = source.deleteNote(testNote,locatorNote)
+        val result = source.deleteNote(testNote, locatorNote,dispatcher)
 
         coVerify { noteRepository.deleteNote(testNote) }
         coVerify { transactionRepository.updateTransactions(testTransaction) }

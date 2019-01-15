@@ -16,7 +16,8 @@ import kotlinx.coroutines.coroutineScope
 class RegisteredNoteSource {
 
     suspend fun getNotes(
-        locator: NoteServiceLocator
+        locator: NoteServiceLocator,
+        dispatcher: DispatcherProvider
     ): Result<Exception, List<Note>> {
 
         val transactionResult = locator.transactionReg.getTransactions()
@@ -57,7 +58,8 @@ class RegisteredNoteSource {
 
     suspend fun getNoteById(
         id: String,
-        locator: NoteServiceLocator
+        locator: NoteServiceLocator,
+        dispatcher: DispatcherProvider
     ): Result<Exception, Note?> {
 
         return locator.remoteReg.getNote(id)
@@ -65,7 +67,9 @@ class RegisteredNoteSource {
 
     suspend fun updateNote(
         note: Note,
-        locator: NoteServiceLocator
+        locator: NoteServiceLocator,
+        dispatcher: DispatcherProvider
+
     ): Result<Exception, Unit> {
 
         val remoteResult = locator.remoteReg.updateNote(note)
@@ -76,7 +80,9 @@ class RegisteredNoteSource {
 
     suspend fun deleteNote(
         note: Note,
-        locator: NoteServiceLocator
+        locator: NoteServiceLocator,
+        dispatcher: DispatcherProvider
+
     ): Result<Exception, Unit> {
 
         val remoteResult = locator.remoteReg.deleteNote(note)
